@@ -7,7 +7,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY itens-service/app.py .
 
-RUN useradd -m appuser
+RUN useradd -m appuser && mkdir /data && chown appuser /data
 USER appuser
 
 EXPOSE 5002

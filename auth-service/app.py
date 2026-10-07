@@ -1,4 +1,3 @@
-"""auth-service: verifica o utilizador e a palavra-passe."""
 import os
 
 from flask import Flask, jsonify, request
@@ -6,10 +5,25 @@ from flask import Flask, jsonify, request
 UTILIZADOR = os.getenv("ADMIN_USER", "admin")
 PASSWORD = os.getenv("ADMIN_PASSWORD", "admin123")
 
+def configurar_tracing(app):
+    if not os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT"):
+        return
+    from opentelemetry import trace
+    from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+    from opentelemetry.instrumentation.flask import FlaskInstrumentor
+    from opentelemetry.sdk.trace import TracerProvider
+    from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
+    provider = TracerProvider()
+    provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
+    trace.set_tracer_provider(provider)
+    FlaskInstrumentor().instrument_app(app)
+
 
 def create_app():
     app = Flask(__name__)
     app.json.ensure_ascii = False
+    configurar_tracing(app)
 
     @app.get("/health")
     def health():

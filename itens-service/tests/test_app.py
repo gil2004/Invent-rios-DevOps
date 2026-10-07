@@ -7,8 +7,8 @@ CRED = ("admin", "admin123")
 
 
 @pytest.fixture
-def client():
-    return create_app().test_client()
+def client(tmp_path):
+    return create_app(db_path=tmp_path / "itens.db").test_client()
 
 
 @pytest.fixture

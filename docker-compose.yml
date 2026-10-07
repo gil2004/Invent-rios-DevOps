@@ -24,6 +24,9 @@ services:
     restart: unless-stopped
     networks:
       - inventario-net
+    environment:
+      OTEL_SERVICE_NAME: auth-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318
 
   itens-service:
     build:
@@ -32,6 +35,11 @@ services:
     image: ghcr.io/gil2004/inventario-itens:${TAG:-latest}
     environment:
       AUTH_URL: http://auth-service:5001
+      DB_PATH: /data/itens.db
+      OTEL_SERVICE_NAME: itens-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318
+    volumes:
+      - itens-data:/data
     deploy:
       replicas: 2
     restart: unless-stopped
@@ -40,8 +48,21 @@ services:
     networks:
       - inventario-net
 
+  jaeger:
+    image: jaegertracing/jaeger:latest
+    ports:
+      - "16686:16686"
+    restart: unless-stopped  
+    networks:
+      - inventario-net
+
 networks:
   inventario-net:
     ipam:
       config:
         - subnet: 172.28.0.0/24
+
+volumes:
+  itens-data:
+
+  
