@@ -1,0 +1,88 @@
+name: Pipeline CI/CD
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  TAG: ${{ github.sha }}
+
+jobs:
+  dev:
+    name: DEV - lint e testes unitários
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Lint (ruff)
+        run: ruff check .
+      - name: Testes unitários auth-service
+        working-directory: auth-service
+        run: python -m pytest -v --cov=app
+      - name: Testes unitários itens-service
+        working-directory: itens-service
+        run: python -m pytest -v --cov=app
+
+  stg:
+    name: STG - build das imagens e testes de integração
+    needs: dev
+    runs-on: ubuntu-latest
+    environment: stg
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Login no GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Build das imagens (tag = commit)
+        run: docker compose build
+      - name: Arrancar o ambiente
+        run: |
+          docker compose up -d
+          sleep 10
+      - name: Testes de integração
+        run: python -m pytest -v tests/integracao
+      - name: Publicar as imagens testadas (commit + latest)
+        run: |
+          docker compose push auth-service itens-service
+          for s in auth itens; do
+            docker tag ghcr.io/gil2004/inventario-$s:$TAG ghcr.io/gil2004/inventario-$s:latest
+            docker push ghcr.io/gil2004/inventario-$s:latest
+          done
+      - name: Parar o ambiente
+        if: always()
+        run: docker compose down
+
+  prd:
+    name: PRD - deploy sem build e smoke tests
+    needs: stg
+    runs-on: ubuntu-latest
+    environment: prd
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Login no GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Deploy (pull das imagens testadas em STG, sem build)
+        run: |
+          docker compose pull
+          docker compose up -d --no-build
+          sleep 10
+      - name: Smoke tests e verificação do tracing
+        run: python -m pytest -v tests/smoke
+      - name: Parar o ambiente
+        if: always()
+        run: docker compose down
