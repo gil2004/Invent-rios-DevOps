@@ -1,9 +1,14 @@
 import os
+from pathlib import Path
 
+import pytest
 import requests
 
-URL = os.getenv("BASE_URL", "http://localhost")
+URL = os.getenv("BASE_URL", "https://localhost")
 CRED = (os.getenv("ADMIN_USER", "admin"), os.getenv("ADMIN_PASSWORD", "admin123"))
+
+CERT = Path(__file__).resolve().parents[2] / "nginx" / "certs" / "nginx.crt"
+os.environ.setdefault("REQUESTS_CA_BUNDLE", str(CERT))
 
 
 def test_servicos_ativos():
@@ -35,3 +40,9 @@ def test_credenciais_erradas_rejeitadas():
 def test_auth_service_nao_exposto():
     r = requests.post(f"{URL}/api/verificar", json={}, timeout=5)
     assert r.status_code == 404
+
+
+def test_porta_80_fechada():
+    # Só existe HTTPS: um pedido em HTTP simples tem de falhar
+    with pytest.raises(requests.exceptions.ConnectionError):
+        requests.get(URL.replace("https://", "http://") + "/health/itens", timeout=5)

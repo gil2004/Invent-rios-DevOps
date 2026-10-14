@@ -1,12 +1,16 @@
 import os
 import time
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 import requests
 
-URL = os.getenv("BASE_URL", "http://localhost")
+URL = os.getenv("BASE_URL", "https://localhost")
 JAEGER_URL = os.getenv("JAEGER_URL", "http://localhost:16686")
 CRED = (os.getenv("ADMIN_USER", "admin"), os.getenv("ADMIN_PASSWORD", "admin123"))
+
+CERT = Path(__file__).resolve().parents[2] / "nginx" / "certs" / "nginx.crt"
+os.environ.setdefault("REQUESTS_CA_BUNDLE", str(CERT))
 
 
 def test_health():

@@ -46,6 +46,14 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Build das imagens (tag = commit)
         run: docker compose build
+      - name: Gerar certificado self-signed (HTTPS)
+        run: |
+          mkdir -p nginx/certs
+          openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+            -keyout nginx/certs/nginx.key \
+            -out nginx/certs/nginx.crt \
+            -subj "/CN=localhost" \
+            -addext "subjectAltName=DNS:localhost, IP:127.0.0.1"
       - name: Arrancar o ambiente
         run: |
           docker compose up -d
@@ -76,6 +84,14 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Login no GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Gerar certificado self-signed (HTTPS)
+        run: |
+          mkdir -p nginx/certs
+          openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+            -keyout nginx/certs/nginx.key \
+            -out nginx/certs/nginx.crt \
+            -subj "/CN=localhost" \
+            -addext "subjectAltName=DNS:localhost, IP:127.0.0.1" 
       - name: Deploy (pull das imagens testadas em STG, sem build)
         run: |
           docker compose pull
