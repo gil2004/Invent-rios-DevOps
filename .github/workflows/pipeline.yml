@@ -71,8 +71,8 @@ jobs:
         if: always()
         run: docker compose down
 
-  prd:
-    name: PRD - deploy sem build e smoke tests
+    prd:
+    name: PRD - deploy em Kubernetes (sem build) e smoke tests
     needs: stg
     runs-on: ubuntu-latest
     environment: prd
@@ -82,8 +82,15 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
-      - name: Login no GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Instalar o Kubernetes (MicroK8s)
+        run: |
+          sudo snap install microk8s --classic --channel=1.33/stable
+          sudo microk8s status --wait-ready
+          sudo microk8s enable dns hostpath-storage
+          mkdir -p ~/.kube
+          sudo microk8s config > ~/.kube/config
+          kubectl wait --for=condition=available deployment --all -n kube-system --timeout=180s
+          kubectl get nodes
       - name: Gerar certificado self-signed (HTTPS)
         run: |
           mkdir -p nginx/certs
@@ -91,14 +98,21 @@ jobs:
             -keyout nginx/certs/nginx.key \
             -out nginx/certs/nginx.crt \
             -subj "/CN=localhost" \
-            -addext "subjectAltName=DNS:localhost, IP:127.0.0.1" 
-      - name: Deploy (pull das imagens testadas em STG, sem build)
+            -addext "subjectAltName=DNS:localhost, IP:127.0.0.1"
+      - name: Deploy (imagens testadas em STG, sem build)
         run: |
-          docker compose pull
-          docker compose up -d --no-build
-          sleep 10
+          kubectl create configmap nginx-conf --from-file=default.conf=nginx/nginx.conf
+          kubectl create secret tls nginx-tls --cert=nginx/certs/nginx.crt --key=nginx/certs/nginx.key
+          kubectl apply -f k8s/prd.yml
+          kubectl wait --for=condition=available deployment --all --timeout=300s
+          kubectl get pods
       - name: Smoke tests e verificação do tracing
+        env:
+          BASE_URL: https://localhost:30443
+          JAEGER_URL: http://localhost:30686
         run: python -m pytest -v tests/smoke
-      - name: Parar o ambiente
-        if: always()
-        run: docker compose down
+      - name: Diagnóstico (só se falhar)
+        if: failure()
+        run: |
+          kubectl get pods -o wide
+          kubectl describe pods | tail -60
