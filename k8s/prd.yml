@@ -1,0 +1,193 @@
+# PRD em Kubernetes (MicroK8s): imagens do GHCR, sem build.
+# Cada peça tem um Deployment (o que corre e quantas réplicas) e um Service (como se chega lá).
+
+# ---------- auth-service: verifica o login (2 réplicas, sem disco) ----------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      containers:
+        - name: auth-service
+          image: ghcr.io/gil2004/inventario-auth:latest
+          ports:
+            - containerPort: 5001
+          env:
+            - name: OTEL_SERVICE_NAME
+              value: auth-service
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://jaeger:4318
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+spec:
+  selector:
+    app: auth-service
+  ports:
+    - protocol: TCP
+      port: 5001
+      targetPort: 5001
+---
+# ---------- itens-service: CRUD dos itens (2 réplicas, partilham o disco do SQLite) ----------
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: itens-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: itens-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: itens-service
+  template:
+    metadata:
+      labels:
+        app: itens-service
+    spec:
+      containers:
+        - name: itens-service
+          image: ghcr.io/gil2004/inventario-itens:latest
+          ports:
+            - containerPort: 5002
+          env:
+            - name: AUTH_URL
+              value: http://auth-service:5001
+            - name: DB_PATH
+              value: /data/itens.db
+            - name: OTEL_SERVICE_NAME
+              value: itens-service
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://jaeger:4318
+          volumeMounts:
+            - name: dados
+              mountPath: /data
+      volumes:
+        - name: dados
+          persistentVolumeClaim:
+            claimName: itens-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: itens-service
+spec:
+  selector:
+    app: itens-service
+  ports:
+    - protocol: TCP
+      port: 5002
+      targetPort: 5002
+---
+# ---------- nginx: porta de entrada HTTPS (2 réplicas), aberta no PC na porta 30443 ----------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:alpine
+          ports:
+            - containerPort: 443
+          volumeMounts:
+            - name: config
+              mountPath: /etc/nginx/conf.d
+            - name: certs
+              mountPath: /etc/nginx/certs
+      volumes:
+        - name: config
+          configMap:
+            name: nginx-conf
+        - name: certs
+          secret:
+            secretName: nginx-tls
+            items:
+              - key: tls.crt
+                path: nginx.crt
+              - key: tls.key
+                path: nginx.key
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 443
+      targetPort: 443
+      nodePort: 30443
+  type: NodePort
+---
+# ---------- Jaeger: recebe os traces e mostra a UI no PC na porta 30686 ----------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jaeger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jaeger
+  template:
+    metadata:
+      labels:
+        app: jaeger
+    spec:
+      containers:
+        - name: jaeger
+          image: jaegertracing/jaeger:latest
+          ports:
+            - containerPort: 16686
+            - containerPort: 4318
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger
+spec:
+  selector:
+    app: jaeger
+  ports:
+    - name: ui
+      protocol: TCP
+      port: 16686
+      targetPort: 16686
+      nodePort: 30686
+    - name: otlp
+      protocol: TCP
+      port: 4318
+      targetPort: 4318
+  type: NodePort
