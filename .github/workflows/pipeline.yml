@@ -71,7 +71,7 @@ jobs:
         if: always()
         run: docker compose down
 
-    prd:
+  prd:
     name: PRD - deploy em Kubernetes (sem build) e smoke tests
     needs: stg
     runs-on: ubuntu-latest
