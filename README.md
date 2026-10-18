@@ -18,6 +18,15 @@ Cada push para a `main` corre o GitHub Actions: **DEV** (lint + testes unitário
 **STG** (build das imagens + testes de integração + publicação no GHCR) → aprovação
 manual → **PRD** (deploy em Kubernetes, sem build, + smoke tests).
 
+O build é feito uma só vez, em STG. O PRD não constrói nada: descarrega as imagens já
+testadas e arranca-as, por isso o deploy é rápido.
+
+No GitHub Actions, o job PRD demora mais do que o deploy em si, porque cada job corre
+numa máquina nova e vazia: antes do deploy tem de **instalar o MicroK8s**, o que ocupa a
+maior parte do tempo do job. Num ambiente de produção real o cluster já existe e está
+sempre ligado (como o MicroK8s do PC), por isso subir o PRD é só o passo de deploy:
+`kubectl apply` com as imagens prontas, sem build.
+
 ## 3. Arquitetura (PRD)
 
 ![HLD](docs/20261013-HLD-ProjetoFinal-DevOps.drawio.png)
