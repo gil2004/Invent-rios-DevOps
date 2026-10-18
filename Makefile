@@ -15,9 +15,6 @@ JSON       := -H "Content-Type: application/json"
 .PHONY: all start_dev cert start_stg stg_status stop_stg k8s_start k8s_stop k8s_check \
         start_prd prd_status stop_prd prd_demo prd_ha prd_scale jaeger_dashboard jaeger_erro clean
 
-# Tudo do zero até produção
-all: start_dev start_stg start_prd prd_demo
-
 ## DEV ##
 
 # DEV: venv, dependências, lint e testes unitários
@@ -67,7 +64,7 @@ k8s_start:
 
 # Desligar o Kubernetes (liberta memória, não apaga nada)
 k8s_stop:
-	microk8s stop
+	microk8s stop || (sleep 15 && microk8s stop)
 
 # Estado do Kubernetes
 k8s_check:
@@ -81,6 +78,7 @@ start_prd: cert k8s_start
 	$(K) create configmap nginx-conf --from-file=default.conf=nginx/nginx.conf --dry-run=client -o yaml | $(K) apply -f -
 	$(K) create secret tls nginx-tls --cert=$(CERT) --key=nginx/certs/nginx.key --dry-run=client -o yaml | $(K) apply -f -
 	$(K) apply -f k8s/prd.yml
+	$(K) rollout restart deployment nginx
 	$(K) wait --for=condition=available deployment --all --timeout=300s
 	BASE_URL=$(PRD_URL) JAEGER_URL=$(JAEGER_PRD) $(PY) -m pytest -v tests/smoke
 	@echo ""
@@ -122,7 +120,7 @@ prd_ha:
 	$(K) delete $$($(K) get pods -l app=itens-service -o name | head -1) --wait=false
 	@echo "--- A API continua a responder (a outra réplica atende)"
 	@curl -s --cacert $(CERT) $(PRD_URL)/api/itens; echo
-	sleep 5
+	$(K) rollout status deployment itens-service
 	@echo "--- O Kubernetes já criou um pod novo"
 	$(K) get pods -l app=itens-service
 
@@ -157,7 +155,7 @@ jaeger_erro:
 clean:
 	make stop_prd
 	-make stop_stg
-	docker stop $$(docker ps -qa) || true
+	docker ps -qa | xargs -r docker stop
 	docker system prune -af --volumes
 	docker network prune -f
 	docker volume prune -af
@@ -174,7 +172,7 @@ clean:
 	docker volume ls
 	docker network ls
 	docker system df
-	make k8s_stop
+	-make k8s_stop
 	@echo "--- Os pedidos seguintes TEM de falhar"
 	@curl -sk --max-time 3 $(STG_URL)/health/itens > /dev/null && echo "ERRO: STG ainda responde" || echo "STG parado: OK"
 	@curl -sk --max-time 3 $(PRD_URL)/health/itens > /dev/null && echo "ERRO: PRD ainda responde" || echo "PRD parado: OK"
