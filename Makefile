@@ -28,8 +28,6 @@ JSON       := -H "Content-Type: application/json"
         cert build_stg start_stg stg_status stop_stg clean_stg \
         k8s_start k8s_stop build_prd start_prd prd_status stop_prd clean_prd prd_demo prd_ha prd_scale clean
 
-# Ciclo completo: DEV -> STG -> PRD (cada ambiente é parado antes do seguinte para poupar recursos)
-all: build_dev test_dev start_dev stop_dev build_stg start_stg stop_stg build_prd start_prd prd_demo
 
 ## DEV ##
 

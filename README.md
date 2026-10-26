@@ -29,7 +29,7 @@ O itens-service pergunta ao auth-service se estão corretas; se não estiverem, 
 |---|---|---|---|---|
 | **DEV** | desenvolver e testar o código | venv + Docker Compose (`docker-compose.dev.yml`) com **Jaeger** | `requirements-dev.txt` (tudo, incluindo OpenTelemetry, bandit e pip-audit) | lint, unitários, segurança e tracing |
 | **STG** | fazer o **build** das imagens de PRD e validar que passam nos testes | Docker Compose (`docker-compose.yml`) | imagens com `requirements-prd.txt`; testes com `requirements-stg.txt` | integração |
-| **PRD** | subir a app já pronta | Kubernetes (MicroK8s, `k8s/prd.yml`) | só `requirements-prd.txt` (Flask, gunicorn, requests) | confirmação com 3 `curl` |
+| **PRD** | subir a app já pronta | Kubernetes (MicroK8s, `k8s/prd.yml`) | imagens só com `requirements-prd.txt` (Flask, gunicorn, requests) | smoke tests (correm fora da app) |
 
 - **Requirements por ambiente:** as imagens de produção só têm as bibliotecas mínimas para a
   app correr. O OpenTelemetry e o Jaeger existem apenas em DEV, porque servem para testes.
@@ -69,55 +69,77 @@ resposta pelo mesmo caminho.
 | Make | uma tarefa por fase de cada ambiente |
 | draw.io | desenho da arquitetura |
 
-## 5. Como usar cada ambiente (Makefile)
+## 5. Passos: implementação, build, testes e deploy
 
 O Makefile segue o ciclo **build → start → stop → clean** em cada ambiente. Os resultados
 de todos os testes ficam na pasta `reports/`.
 
-**DEV**
-- `make build_dev` — cria o venv com o `requirements-dev.txt` e faz o build das imagens de DEV.
-- `make test_dev` — lint, testes unitários, bandit e pip-audit, **sem nenhum ambiente a
-  correr** (poupa CPU e memória).
-- `make start_dev` — sobe os serviços e o Jaeger (`http://localhost:16686`) e testa que os
-  traces chegam ao Jaeger.
-- `make jaeger_erro` — desliga o auth-service para provocar um 503; no Jaeger, o trace
-  mostra a causa raiz (falha de ligação ao auth-service).
-- `make stop_dev` · `make clean_dev`
+### Passo 1 — Repositório e ambiente Python (DEV) · `make build_dev`
+Repositório Git local ligado ao GitHub (branch `main`). O `make build_dev` cria o **venv**
+com o `requirements-dev.txt` e faz o build das imagens de DEV (com OpenTelemetry).
 
-**STG**
-- `make build_stg` — gera o certificado e faz o build das imagens de PRD.
-- `make start_stg` — sobe nginx (443) + 2 réplicas de cada serviço e corre os testes de
-  integração.
-- `make stop_stg` · `make clean_stg`
+### Passo 2 — DEV: testes de código e segurança · `make test_dev`
+Corre **sem nenhum ambiente ligado** (poupa CPU e memória): lint (ruff), testes unitários
+dos dois serviços (pytest, com o auth-service simulado por `requests-mock`), análise de
+segurança do código (bandit) e das bibliotecas de PRD (pip-audit).
 
-**PRD**
-- `make build_prd` — não há build da app: liga o MicroK8s com os addons `dns` e
-  `hostpath-storage` e faz o *pull* das imagens do GHCR.
-- `make start_prd` — guarda a configuração do nginx (ConfigMap) e o certificado (Secret),
-  aplica o `k8s/prd.yml` e confirma com 3 `curl` que a API responde
-  (`https://localhost:30443`).
-- `make prd_demo` — criar, listar, alterar e apagar um item, e login errado (401).
-- `make prd_ha` — apaga um pod: a API continua a responder e o Kubernetes cria outro.
-- `make prd_scale` — escala o itens-service de 2 para 4 réplicas e volta a 2.
-- `make stop_prd` · `make clean_prd`
+### Passo 3 — DEV: ambiente com Jaeger · `make start_dev`
+Sobe os dois serviços e o Jaeger (`http://localhost:16686`) e testa que os traces dos dois
+serviços chegam ao Jaeger. O `make jaeger_erro` desliga o auth-service para provocar um 503:
+no Jaeger, o trace mostra a causa raiz (falha de ligação ao auth-service). Parar:
+`make stop_dev`.
 
-**Tudo:** `make all` corre DEV → STG → PRD, parando cada ambiente antes do seguinte.
-`make clean` limpa os três e confirma que nada do projeto ficou a correr. A limpeza remove
-**apenas o que é do projeto** (containers, imagens, volumes e redes `inventario`), sem
-afetar outros containers do PC.
+### Passo 4 — STG: build das imagens de PRD · `make build_stg`
+Gera o certificado HTTPS e faz o build das imagens com o `requirements-prd.txt` (sem
+ferramentas de teste nem OpenTelemetry).
+
+### Passo 5 — STG: validar o ambiente · `make start_stg`
+Sobe o nginx (443, HTTPS) e 2 réplicas de cada serviço e corre os testes de integração:
+CRUD completo, login errado recusado, auth-service não exposto e porta 80 fechada. Parar:
+`make stop_stg`.
+
+### Passo 6 — Pipeline · `git push`
+Cada push corre DEV → STG → PRD no GitHub Actions (secção 6). As imagens aprovadas em STG
+são publicadas no GHCR com a tag do commit.
+
+### Passo 7 — PRD: pull das imagens · `make build_prd`
+Não há build da app: liga o MicroK8s com os addons `dns` e `hostpath-storage` e faz o
+*pull* das imagens do GHCR.
+
+### Passo 8 — PRD: subir e confirmar · `make start_prd`
+Guarda a configuração do nginx (ConfigMap) e o certificado (Secret), aplica o
+`k8s/prd.yml` e corre os smoke tests contra `https://localhost:30443`.
+
+### Passo 9 — PRD: usar a aplicação · `make prd_demo` · `make prd_ha` · `make prd_scale`
+- `prd_demo` — criar (201), listar, alterar (200) e apagar (204) um item; login errado (401).
+- `prd_ha` — apaga um pod: a API continua a responder e o Kubernetes cria outro.
+- `prd_scale` — escala o itens-service de 2 para 4 réplicas e volta a 2.
+
+### Passo 10 — Paragem, destruição e limpeza · `make clean`
+Para e destrói os três ambientes (`clean_dev`, `clean_stg`, `clean_prd`): recursos do
+Kubernetes, containers, imagens, volumes e redes do projeto, cache de build, venv, caches e
+certificado, e desliga o MicroK8s. No fim lista o que existe para provar que ficou vazio e
+tenta aceder a DEV, Jaeger, STG e PRD — esses pedidos **têm de falhar**. A limpeza remove
+**apenas o que é do projeto**, sem afetar outros containers do PC.
+
 
 ## 6. Pipeline (GitHub Actions)
 
 Cada push para a `main` corre três jobs, com os ambientes `dev`, `stg` e `prd` do GitHub:
 
-1. **DEV** — instala o `requirements-dev.txt` e corre lint, unitários, bandit e pip-audit.
+1. **DEV** — instala o `requirements-dev.txt`, corre lint, unitários, bandit e pip-audit
+   e depois sobe o `docker-compose.dev.yml` com o **Jaeger** para o teste de tracing.
 2. **STG** — faz o build das imagens de PRD (tag = commit), sobe o Docker Compose, corre
    os testes de integração e publica as imagens aprovadas no GHCR.
-3. **PRD** — sem Python e sem build: aplica o `k8s/prd.yml` com a **tag do commit testado em
-   STG** e confirma com 3 `curl` que a API responde.
+3. **PRD** — sem build: aplica o `k8s/prd.yml` com a **tag do commit testado em STG** e
+   corre os smoke tests. O pytest é instalado só no runner, para testar de fora; não entra
+   na app.
 
 Cada job guarda os seus relatórios como *artifact* (`reports-dev`, `reports-stg`,
 `reports-prd`).
+
+O certificado HTTPS está guardado nos **Secrets do GitHub** (`TLS_CRT` e `TLS_KEY`): o
+pipeline não gera certificados, vai buscá-los ao cofre, como numa empresa.
 
 O job PRD instala o MicroK8s porque o runner do GitHub é uma máquina nova e vazia em cada
 execução, que simula o servidor de produção. Num servidor real, o cluster já existe e está
@@ -126,8 +148,8 @@ ligado, e o PRD faz apenas o *pull* da imagem testada e o `kubectl apply`.
 ## 7. Decisões de design
 
 - **HTTPS só na 443**, certificado self-signed gerado com `openssl` (em produção real seria
-  assinado por uma entidade de confiança). A chave privada nunca vai para o Git: cada
-  ambiente gera a sua.
+  assinado por uma entidade de confiança). A chave privada nunca vai para o Git: no PC é
+  gerada pelo Makefile e no pipeline vem dos Secrets do GitHub.
 - **Kubernetes em PRD** — mantém o número de réplicas pedido, recria pods que falham,
   escala com um comando e distribui os pedidos pelas réplicas. O Docker Compose fica em DEV
   e STG, onde a simplicidade é mais importante.
@@ -138,8 +160,11 @@ ligado, e o PRD faz apenas o *pull* da imagem testada e o `kubectl apply`.
 - **Tag do commit** — garante que o PRD corre exatamente a imagem que passou nos testes de STG.
 - **Testes de código e segurança sem ambiente a correr** — só os testes de tracing (DEV) e
   de integração (STG) precisam do ambiente ligado.
-- **PRD só com confirmação mínima** — os testes completos ficam em DEV e STG; em PRD só se
-  confirma que a instalação subiu.
+- **Testes em PRD só de confirmação** — os testes completos ficam em DEV e STG; os smoke
+  tests de PRD confirmam que a instalação subiu e correm de fora, sem acrescentar nada às
+  imagens.
+- **Três ficheiros de requirements** em vez de um `requirements.txt` único, como pedido na
+  revisão do professor: cada ambiente instala só o que precisa.
 
 ## 8. Evidências (pasta `reports/`)
 
@@ -149,9 +174,9 @@ ligado, e o PRD faz apenas o *pull* da imagem testada e o `kubectl apply`.
 | Unitários | DEV | auth-service 5 (cobertura 70 %) · itens-service 17 (86 %) |
 | Segurança do código (bandit) | DEV | 0 problemas |
 | Vulnerabilidades (pip-audit) | DEV | 0 vulnerabilidades |
-| Tracing | DEV | os dois serviços enviam traces ao Jaeger |
+| Tracing | DEV (PC e pipeline) | os dois serviços enviam traces ao Jaeger |
 | Integração | STG | 5 aprovados, incluindo porta 80 fechada |
-| Confirmação de PRD | PRD | health dos 2 serviços e listagem com resposta |
+| Smoke tests | PRD | 3 aprovados (health, listagem, criar e apagar) |
 | Alta disponibilidade e escala | PRD | pod apagado e recriado sem a API parar; 2 → 4 → 2 réplicas |
 | Pipeline | GitHub Actions | DEV ✅ · STG ✅ · PRD ✅ |
 
@@ -167,6 +192,7 @@ ligado, e o PRD faz apenas o *pull* da imagem testada e o `kubectl apply`.
 | pip-audit: vulnerabilidades no Flask 3.1.2 e requests 2.32.5 | atualizados para 3.1.3 e 2.33.0 |
 | As imagens de PRD tinham bibliotecas de teste e OpenTelemetry | requirements separados por ambiente e Dockerfile com `requirements-prd.txt` por defeito |
 | Certificado antigo no nginx depois de limpar | o `start_prd` reinicia o nginx depois de atualizar o certificado |
+| Cada job do pipeline corre numa máquina nova, sem o certificado | certificado guardado nos Secrets do GitHub |
 
 ## 10. Limitações
 
@@ -182,7 +208,7 @@ SQLite.
 | Incluir os resultados dos testes de integração e de segurança | pasta `reports/` no ZIP |
 | Make por ambiente: `build_`, `start_`, `stop_`, `clean_` | Makefile com o ciclo completo para DEV, STG e PRD |
 | Requirements distintos para DEV/STG/PRD; sem OpenTelemetry/Jaeger em PRD | `requirements-dev/stg/prd.txt`; Jaeger só em DEV |
-| DEV desenvolve e testa, STG faz o build e valida, PRD faz só o pull e sobe | secções 2, 5 e 6 |
+| DEV desenvolve e testa, STG faz o build e valida, PRD faz só o pull e sobe | secções 2, 5 e 6; o PRD sobe a tag do commit testado em STG |
 | Não é preciso o ambiente a correr para os testes de código e segurança | `make test_dev` corre sem ambiente |
 | `make start_prd` falhou (addons e timeout) | `k8s_start` liga os addons; diagnóstico automático se o deploy falhar |
 
