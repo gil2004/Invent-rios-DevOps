@@ -13,7 +13,7 @@ env:
 
 jobs:
   dev:
-    name: DEV - lint, testes unitários e segurança (sem ambiente a correr)
+    name: DEV - lint, unitários, segurança e tracing com Jaeger
     runs-on: ubuntu-latest
     environment: dev
     steps:
@@ -35,6 +35,15 @@ jobs:
         run: bandit -r auth-service itens-service -x auth-service/tests,itens-service/tests | tee reports/seguranca-bandit.txt
       - name: Segurança das bibliotecas de PRD (pip-audit)
         run: pip-audit -r requirements-prd.txt | tee reports/seguranca-pip-audit.txt
+      - name: Subir o ambiente DEV com o Jaeger
+        run: |
+          docker compose -f docker-compose.dev.yml up -d --build
+          sleep 10
+      - name: Teste de tracing (os traces chegam ao Jaeger)
+        run: python -m pytest -v tests/dev | tee reports/dev-tracing.txt
+      - name: Parar o ambiente DEV
+        if: always()
+        run: docker compose -f docker-compose.dev.yml down
       - name: Guardar relatórios
         if: always()
         uses: actions/upload-artifact@v4
@@ -57,14 +66,14 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Build das imagens de PRD (só requirements-prd, tag = commit)
         run: docker compose build
-      - name: Gerar certificado self-signed (HTTPS)
+      - name: Certificado HTTPS (guardado nos Secrets do GitHub)
+        env:
+          TLS_CRT: ${{ secrets.TLS_CRT }}
+          TLS_KEY: ${{ secrets.TLS_KEY }}
         run: |
           mkdir -p nginx/certs
-          openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-            -keyout nginx/certs/nginx.key \
-            -out nginx/certs/nginx.crt \
-            -subj "/CN=localhost" \
-            -addext "subjectAltName=DNS:localhost, IP:127.0.0.1"
+          printf '%s\n' "$TLS_CRT" > nginx/certs/nginx.crt
+          printf '%s\n' "$TLS_KEY" > nginx/certs/nginx.key
       - name: Arrancar o ambiente
         run: |
           docker compose up -d
@@ -91,13 +100,18 @@ jobs:
           path: reports/
 
   prd:
-    name: PRD - pull da imagem testada em STG para Kubernetes (sem build)
+    name: PRD - pull da imagem testada em STG para Kubernetes (sem build) e smoke tests
     needs: stg
     runs-on: ubuntu-latest
     environment: prd
     steps:
       - uses: actions/checkout@v5
-      - name: Instalar o Kubernetes (MicroK8s)
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Ferramentas de teste no runner (não entram na app)
+        run: pip install -r requirements-stg.txt
+      - name: Preparar o servidor de PRD - instalar o MicroK8s (runner vazio; num servidor real já existe)
         run: |
           sudo snap install microk8s --classic --channel=1.33/stable
           sudo microk8s status --wait-ready
@@ -106,14 +120,14 @@ jobs:
           sudo microk8s config > ~/.kube/config
           kubectl wait --for=condition=available deployment --all -n kube-system --timeout=180s
           kubectl get nodes
-      - name: Gerar certificado self-signed (HTTPS)
+      - name: Certificado HTTPS (guardado nos Secrets do GitHub)
+        env:
+          TLS_CRT: ${{ secrets.TLS_CRT }}
+          TLS_KEY: ${{ secrets.TLS_KEY }}
         run: |
           mkdir -p nginx/certs
-          openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-            -keyout nginx/certs/nginx.key \
-            -out nginx/certs/nginx.crt \
-            -subj "/CN=localhost" \
-            -addext "subjectAltName=DNS:localhost, IP:127.0.0.1"
+          printf '%s\n' "$TLS_CRT" > nginx/certs/nginx.crt
+          printf '%s\n' "$TLS_KEY" > nginx/certs/nginx.key
       - name: Deploy da imagem testada em STG (tag = commit, sem build)
         run: |
           kubectl create configmap nginx-conf --from-file=default.conf=nginx/nginx.conf
@@ -121,12 +135,12 @@ jobs:
           sed "s/:latest/:$TAG/" k8s/prd.yml | kubectl apply -f -
           kubectl wait --for=condition=available deployment --all --timeout=300s
           kubectl get pods -o wide
-      - name: Confirmar que a API responde
+      - name: Smoke tests
+        env:
+          BASE_URL: https://localhost:30443
         run: |
           mkdir -p reports
-          curl -sf --cacert nginx/certs/nginx.crt https://localhost:30443/health/itens | tee reports/prd-health.txt && echo
-          curl -sf --cacert nginx/certs/nginx.crt https://localhost:30443/health/auth | tee -a reports/prd-health.txt && echo
-          curl -sf --cacert nginx/certs/nginx.crt https://localhost:30443/api/itens | tee -a reports/prd-health.txt && echo
+          python -m pytest -v tests/smoke | tee reports/prd-smoke.txt
       - name: Diagnóstico (só se falhar)
         if: failure()
         run: |
