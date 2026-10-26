@@ -1,0 +1,1413 @@
+Script iniciado em 2026-10-26 18:00:25+00:00 [TERM="xterm-256color" TTY="/dev/pts/2" COLUMNS="181" LINES="51"]
+[?2004h]0;gil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx: ~/Secretária/ProjetoFinal/ProjetoFinal[01;32mgil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx[00m:[01;34m~/Secretária/ProjetoFinal/ProjetoFinal[00m$ make build_dev
+[?2004lpython3 -m venv venv
+"/home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal/venv/bin/python" -m pip install -r requirements-dev.txt
+Collecting flask==3.1.3 (from -r requirements-prd.txt (line 1))
+  Using cached flask-3.1.3-py3-none-any.whl.metadata (3.2 kB)
+Collecting gunicorn==23.0.0 (from -r requirements-prd.txt (line 2))
+  Using cached gunicorn-23.0.0-py3-none-any.whl.metadata (4.4 kB)
+Collecting requests==2.33.0 (from -r requirements-prd.txt (line 3))
+  Using cached requests-2.33.0-py3-none-any.whl.metadata (5.1 kB)
+Collecting pytest==8.4.2 (from -r requirements-dev.txt (line 2))
+  Using cached pytest-8.4.2-py3-none-any.whl.metadata (7.7 kB)
+Collecting pytest-cov==7.0.0 (from -r requirements-dev.txt (line 3))
+  Using cached pytest_cov-7.0.0-py3-none-any.whl.metadata (31 kB)
+Collecting requests-mock==1.12.1 (from -r requirements-dev.txt (line 4))
+  Using cached requests_mock-1.12.1-py2.py3-none-any.whl.metadata (4.1 kB)
+Collecting ruff==0.13.2 (from -r requirements-dev.txt (line 5))
+  Using cached ruff-0.13.2-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (25 kB)
+Collecting bandit==1.8.6 (from -r requirements-dev.txt (line 6))
+  Using cached bandit-1.8.6-py3-none-any.whl.metadata (6.9 kB)
+Collecting pip-audit==2.9.0 (from -r requirements-dev.txt (line 7))
+  Using cached pip_audit-2.9.0-py3-none-any.whl.metadata (27 kB)
+Collecting opentelemetry-sdk==1.45.0 (from -r requirements-dev.txt (line 8))
+  Using cached opentelemetry_sdk-1.45.0-py3-none-any.whl.metadata (1.6 kB)
+Collecting opentelemetry-exporter-otlp-proto-http==1.45.0 (from -r requirements-dev.txt (line 9))
+  Using cached opentelemetry_exporter_otlp_proto_http-1.45.0-py3-none-any.whl.metadata (3.1 kB)
+Collecting opentelemetry-instrumentation-flask==0.66b0 (from -r requirements-dev.txt (line 10))
+  Using cached opentelemetry_instrumentation_flask-0.66b0-py3-none-any.whl.metadata (2.2 kB)
+Collecting opentelemetry-instrumentation-requests==0.66b0 (from -r requirements-dev.txt (line 11))
+  Using cached opentelemetry_instrumentation_requests-0.66b0-py3-none-any.whl.metadata (2.6 kB)
+Collecting blinker>=1.9.0 (from flask==3.1.3->-r requirements-prd.txt (line 1))
+  Using cached blinker-1.9.0-py3-none-any.whl.metadata (1.6 kB)
+Collecting click>=8.1.3 (from flask==3.1.3->-r requirements-prd.txt (line 1))
+  Using cached click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+Collecting itsdangerous>=2.2.0 (from flask==3.1.3->-r requirements-prd.txt (line 1))
+  Using cached itsdangerous-2.2.0-py3-none-any.whl.metadata (1.9 kB)
+Collecting jinja2>=3.1.2 (from flask==3.1.3->-r requirements-prd.txt (line 1))
+  Using cached jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+Collecting markupsafe>=2.1.1 (from flask==3.1.3->-r requirements-prd.txt (line 1))
+  Using cached markupsafe-3.0.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+Collecting werkzeug>=3.1.0 (from flask==3.1.3->-r requirements-prd.txt (line 1))
+  Using cached werkzeug-3.1.9-py3-none-any.whl.metadata (4.1 kB)
+Collecting packaging (from gunicorn==23.0.0->-r requirements-prd.txt (line 2))
+  Using cached packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+Collecting charset_normalizer<4,>=2 (from requests==2.33.0->-r requirements-prd.txt (line 3))
+  Using cached charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (46 kB)
+Collecting idna<4,>=2.5 (from requests==2.33.0->-r requirements-prd.txt (line 3))
+  Using cached idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+Collecting urllib3<3,>=1.26 (from requests==2.33.0->-r requirements-prd.txt (line 3))
+  Using cached urllib3-2.8.0-py3-none-any.whl.metadata (7.4 kB)
+Collecting certifi>=2023.5.7 (from requests==2.33.0->-r requirements-prd.txt (line 3))
+  Using cached certifi-2026.10.23-py3-none-any.whl.metadata (2.5 kB)
+Collecting iniconfig>=1 (from pytest==8.4.2->-r requirements-dev.txt (line 2))
+  Using cached iniconfig-2.3.1-py3-none-any.whl.metadata (2.8 kB)
+Collecting pluggy<2,>=1.5 (from pytest==8.4.2->-r requirements-dev.txt (line 2))
+  Using cached pluggy-1.7.0-py3-none-any.whl.metadata (5.0 kB)
+Collecting pygments>=2.7.2 (from pytest==8.4.2->-r requirements-dev.txt (line 2))
+  Using cached pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting coverage>=7.10.6 (from coverage[toml]>=7.10.6->pytest-cov==7.0.0->-r requirements-dev.txt (line 3))
+  Using cached coverage-7.17.0-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (8.1 kB)
+Collecting PyYAML>=5.3.1 (from bandit==1.8.6->-r requirements-dev.txt (line 6))
+  Using cached pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Collecting stevedore>=1.20.0 (from bandit==1.8.6->-r requirements-dev.txt (line 6))
+  Using cached stevedore-5.9.1-py3-none-any.whl.metadata (2.3 kB)
+Collecting rich (from bandit==1.8.6->-r requirements-dev.txt (line 6))
+  Using cached rich-15.0.0-py3-none-any.whl.metadata (18 kB)
+Collecting CacheControl>=0.13.0 (from CacheControl[filecache]>=0.13.0->pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+  Using cached cachecontrol-0.14.4-py3-none-any.whl.metadata (3.1 kB)
+Collecting cyclonedx-python-lib<10,>=5 (from pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+  Using cached cyclonedx_python_lib-9.1.0-py3-none-any.whl.metadata (6.5 kB)
+Collecting pip-api>=0.0.28 (from pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+  Using cached pip_api-0.0.35-py3-none-any.whl.metadata (17 kB)
+Collecting pip-requirements-parser>=32.0.0 (from pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+  Using cached pip_requirements_parser-32.0.1-py3-none-any.whl.metadata (9.3 kB)
+Collecting toml>=0.10 (from pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+  Using cached toml-0.10.2-py2.py3-none-any.whl.metadata (7.1 kB)
+Collecting platformdirs>=4.2.0 (from pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+  Using cached platformdirs-4.13.5-py3-none-any.whl.metadata (5.5 kB)
+Collecting opentelemetry-api==1.45.0 (from opentelemetry-sdk==1.45.0->-r requirements-dev.txt (line 8))
+  Using cached opentelemetry_api-1.45.0-py3-none-any.whl.metadata (1.4 kB)
+Collecting opentelemetry-semantic-conventions==0.66b0 (from opentelemetry-sdk==1.45.0->-r requirements-dev.txt (line 8))
+  Using cached opentelemetry_semantic_conventions-0.66b0-py3-none-any.whl.metadata (2.4 kB)
+Collecting typing-extensions>=4.5.0 (from opentelemetry-sdk==1.45.0->-r requirements-dev.txt (line 8))
+  Using cached typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting googleapis-common-protos~=1.52 (from opentelemetry-exporter-otlp-proto-http==1.45.0->-r requirements-dev.txt (line 9))
+  Using cached googleapis_common_protos-1.76.0-py3-none-any.whl.metadata (8.5 kB)
+Collecting opentelemetry-exporter-http-transport==0.66b0 (from opentelemetry-exporter-http-transport[urllib3]==0.66b0->opentelemetry-exporter-otlp-proto-http==1.45.0->-r requirements-dev.txt (line 9))
+  Using cached opentelemetry_exporter_http_transport-0.66b0-py3-none-any.whl.metadata (2.3 kB)
+Collecting opentelemetry-exporter-otlp-common==0.66b0 (from opentelemetry-exporter-otlp-proto-http==1.45.0->-r requirements-dev.txt (line 9))
+  Using cached opentelemetry_exporter_otlp_common-0.66b0-py3-none-any.whl.metadata (1.9 kB)
+Collecting opentelemetry-exporter-otlp-proto-common==1.45.0 (from opentelemetry-exporter-otlp-proto-http==1.45.0->-r requirements-dev.txt (line 9))
+  Using cached opentelemetry_exporter_otlp_proto_common-1.45.0-py3-none-any.whl.metadata (1.8 kB)
+Collecting opentelemetry-proto==1.45.0 (from opentelemetry-exporter-otlp-proto-http==1.45.0->-r requirements-dev.txt (line 9))
+  Using cached opentelemetry_proto-1.45.0-py3-none-any.whl.metadata (2.3 kB)
+Collecting opentelemetry-instrumentation-wsgi==0.66b0 (from opentelemetry-instrumentation-flask==0.66b0->-r requirements-dev.txt (line 10))
+  Using cached opentelemetry_instrumentation_wsgi-0.66b0-py3-none-any.whl.metadata (2.1 kB)
+Collecting opentelemetry-instrumentation==0.66b0 (from opentelemetry-instrumentation-flask==0.66b0->-r requirements-dev.txt (line 10))
+  Using cached opentelemetry_instrumentation-0.66b0-py3-none-any.whl.metadata (7.2 kB)
+Collecting opentelemetry-util-http==0.66b0 (from opentelemetry-instrumentation-flask==0.66b0->-r requirements-dev.txt (line 10))
+  Using cached opentelemetry_util_http-0.66b0-py3-none-any.whl.metadata (2.6 kB)
+Collecting wrapt<3.0.0,>=1.0.0 (from opentelemetry-instrumentation==0.66b0->opentelemetry-instrumentation-flask==0.66b0->-r requirements-dev.txt (line 10))
+  Using cached wrapt-2.5.1-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (7.6 kB)
+Collecting protobuf<8.0,>=5.0 (from opentelemetry-proto==1.45.0->opentelemetry-exporter-otlp-proto-http==1.45.0->-r requirements-dev.txt (line 9))
+  Using cached protobuf-7.36.2-cp310-abi3-manylinux2014_x86_64.whl.metadata (595 bytes)
+Collecting msgpack<2.0.0,>=0.5.2 (from CacheControl>=0.13.0->CacheControl[filecache]>=0.13.0->pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+  Downloading msgpack-1.2.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (8.3 kB)
+Collecting filelock>=3.8.0 (from CacheControl[filecache]>=0.13.0->pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+  Using cached filelock-4.2.4-py3-none-any.whl.metadata (2.0 kB)
+Collecting license-expression<31,>=30 (from cyclonedx-python-lib<10,>=5->pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+  Using cached license_expression-30.4.4-py3-none-any.whl.metadata (11 kB)
+Collecting packageurl-python<2,>=0.11 (from cyclonedx-python-lib<10,>=5->pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+  Using cached packageurl_python-0.17.6-py3-none-any.whl.metadata (5.1 kB)
+Collecting py-serializable<3.0.0,>=2.0.0 (from cyclonedx-python-lib<10,>=5->pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+  Using cached py_serializable-2.1.0-py3-none-any.whl.metadata (4.3 kB)
+Collecting sortedcontainers<3.0.0,>=2.4.0 (from cyclonedx-python-lib<10,>=5->pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+  Using cached sortedcontainers-2.4.0-py2.py3-none-any.whl.metadata (10 kB)
+Requirement already satisfied: pip in ./venv/lib/python3.12/site-packages (from pip-api>=0.0.28->pip-audit==2.9.0->-r requirements-dev.txt (line 7)) (24.0)
+Collecting pyparsing (from pip-requirements-parser>=32.0.0->pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+  Using cached pyparsing-3.3.3-py3-none-any.whl.metadata (5.9 kB)
+Collecting markdown-it-py>=2.2.0 (from rich->bandit==1.8.6->-r requirements-dev.txt (line 6))
+  Using cached markdown_it_py-4.2.0-py3-none-any.whl.metadata (7.4 kB)
+Collecting boolean.py>=4.0 (from license-expression<31,>=30->cyclonedx-python-lib<10,>=5->pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+  Using cached boolean_py-5.0-py3-none-any.whl.metadata (2.3 kB)
+Collecting mdurl~=0.1 (from markdown-it-py>=2.2.0->rich->bandit==1.8.6->-r requirements-dev.txt (line 6))
+  Using cached mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+Collecting defusedxml<0.8.0,>=0.7.1 (from py-serializable<3.0.0,>=2.0.0->cyclonedx-python-lib<10,>=5->pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+  Using cached defusedxml-0.7.1-py2.py3-none-any.whl.metadata (32 kB)
+Using cached flask-3.1.3-py3-none-any.whl (103 kB)
+Using cached gunicorn-23.0.0-py3-none-any.whl (85 kB)
+Using cached requests-2.33.0-py3-none-any.whl (65 kB)
+Using cached pytest-8.4.2-py3-none-any.whl (365 kB)
+Using cached pytest_cov-7.0.0-py3-none-any.whl (22 kB)
+Using cached requests_mock-1.12.1-py2.py3-none-any.whl (27 kB)
+Using cached ruff-0.13.2-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (13.4 MB)
+Using cached bandit-1.8.6-py3-none-any.whl (133 kB)
+Using cached pip_audit-2.9.0-py3-none-any.whl (58 kB)
+Using cached opentelemetry_sdk-1.45.0-py3-none-any.whl (140 kB)
+Using cached opentelemetry_exporter_otlp_proto_http-1.45.0-py3-none-any.whl (22 kB)
+Using cached opentelemetry_instrumentation_flask-0.66b0-py3-none-any.whl (14 kB)
+Using cached opentelemetry_instrumentation_requests-0.66b0-py3-none-any.whl (13 kB)
+Using cached opentelemetry_api-1.45.0-py3-none-any.whl (60 kB)
+Using cached opentelemetry_exporter_http_transport-0.66b0-py3-none-any.whl (12 kB)
+Using cached opentelemetry_exporter_otlp_common-0.66b0-py3-none-any.whl (12 kB)
+Using cached opentelemetry_exporter_otlp_proto_common-1.45.0-py3-none-any.whl (15 kB)
+Using cached opentelemetry_instrumentation-0.66b0-py3-none-any.whl (36 kB)
+Using cached opentelemetry_instrumentation_wsgi-0.66b0-py3-none-any.whl (13 kB)
+Using cached opentelemetry_proto-1.45.0-py3-none-any.whl (72 kB)
+Using cached opentelemetry_semantic_conventions-0.66b0-py3-none-any.whl (206 kB)
+Using cached opentelemetry_util_http-0.66b0-py3-none-any.whl (8.4 kB)
+Using cached blinker-1.9.0-py3-none-any.whl (8.5 kB)
+Using cached cachecontrol-0.14.4-py3-none-any.whl (22 kB)
+Using cached certifi-2026.10.23-py3-none-any.whl (135 kB)
+Using cached charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (257 kB)
+Using cached click-8.5.0-py3-none-any.whl (125 kB)
+Using cached coverage-7.17.0-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (261 kB)
+Using cached cyclonedx_python_lib-9.1.0-py3-none-any.whl (374 kB)
+Using cached googleapis_common_protos-1.76.0-py3-none-any.whl (307 kB)
+Using cached idna-3.20-py3-none-any.whl (69 kB)
+Using cached iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
+Using cached itsdangerous-2.2.0-py3-none-any.whl (16 kB)
+Using cached jinja2-3.1.6-py3-none-any.whl (134 kB)
+Using cached markupsafe-3.0.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+Using cached packaging-26.3-py3-none-any.whl (129 kB)
+Using cached pip_api-0.0.35-py3-none-any.whl (123 kB)
+Using cached pip_requirements_parser-32.0.1-py3-none-any.whl (35 kB)
+Using cached platformdirs-4.13.5-py3-none-any.whl (32 kB)
+Using cached pluggy-1.7.0-py3-none-any.whl (27 kB)
+Using cached pygments-2.21.0-py3-none-any.whl (1.3 MB)
+Using cached pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+Using cached rich-15.0.0-py3-none-any.whl (310 kB)
+Using cached stevedore-5.9.1-py3-none-any.whl (54 kB)
+Using cached toml-0.10.2-py2.py3-none-any.whl (16 kB)
+Using cached typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Using cached urllib3-2.8.0-py3-none-any.whl (135 kB)
+Using cached werkzeug-3.1.9-py3-none-any.whl (228 kB)
+Using cached filelock-4.2.4-py3-none-any.whl (162 kB)
+Using cached license_expression-30.4.4-py3-none-any.whl (120 kB)
+Using cached markdown_it_py-4.2.0-py3-none-any.whl (91 kB)
+Downloading msgpack-1.2.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (475 kB)
+[?25l                                            0.0/475.7 kB ? eta -:--:--[2K   ╸                                        10.2/475.7 kB ? eta -:--:--[2K   ╸                                        10.2/475.7 kB ? eta -:--:--[2K   ━━╸                                      30.7/475.7 kB 429.7 kB/s eta 0:00:02[2K   ━━━━━                                    61.4/475.7 kB 535.1 kB/s eta 0:00:01[2K   ━━━━━━━╸                                 92.2/475.7 kB 611.3 kB/s eta 0:00:01[2K   ━━━━━━━━━━                               122.9/475.7 kB 667.0 kB/s eta 0:00:01[2K   ━━━━━━━━━━━━╸                            153.6/475.7 kB 725.0 kB/s eta 0:00:01[2K   ━━━━━━━━━━━━━━━━━                        204.8/475.7 kB 822.3 kB/s eta 0:00:01[2K   ━━━━━━━━━━━━━━━━━━━━━╸                   256.0/475.7 kB 911.4 kB/s eta 0:00:01[2K   ━━━━━━━━━━━━━━━━━━━━━━━━━━╸              317.4/475.7 kB 993.8 kB/s eta 0:00:01[2K   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━          368.6/475.7 kB 1.0 MB/s eta 0:00:01[2K   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━     430.1/475.7 kB 1.1 MB/s eta 0:00:01[2K   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 475.7/475.7 kB 1.1 MB/s eta 0:00:00
+[?25hUsing cached packageurl_python-0.17.6-py3-none-any.whl (36 kB)
+Using cached protobuf-7.36.2-cp310-abi3-manylinux2014_x86_64.whl (343 kB)
+Using cached py_serializable-2.1.0-py3-none-any.whl (23 kB)
+Using cached sortedcontainers-2.4.0-py2.py3-none-any.whl (29 kB)
+Using cached wrapt-2.5.1-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (250 kB)
+Using cached pyparsing-3.3.3-py3-none-any.whl (126 kB)
+Using cached boolean_py-5.0-py3-none-any.whl (26 kB)
+Using cached defusedxml-0.7.1-py2.py3-none-any.whl (25 kB)
+Using cached mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+Installing collected packages: sortedcontainers, boolean.py, wrapt, urllib3, typing-extensions, toml, stevedore, ruff, PyYAML, pyparsing, pygments, protobuf, pluggy, platformdirs, pip-api, packaging, packageurl-python, opentelemetry-util-http, msgpack, mdurl, markupsafe, license-expression, itsdangerous, iniconfig, idna, filelock, defusedxml, coverage, click, charset_normalizer, certifi, blinker, werkzeug, requests, pytest, py-serializable, pip-requirements-parser, opentelemetry-proto, opentelemetry-api, markdown-it-py, jinja2, gunicorn, googleapis-common-protos, rich, requests-mock, pytest-cov, opentelemetry-semantic-conventions, opentelemetry-exporter-otlp-proto-common, opentelemetry-exporter-http-transport, flask, cyclonedx-python-lib, CacheControl, opentelemetry-sdk, opentelemetry-instrumentation, bandit, pip-audit, opentelemetry-instrumentation-wsgi, opentelemetry-instrumentation-requests, opentelemetry-exporter-otlp-common, opentelemetry-instrumentation-flask, opentelemetry-exporter-otlp-proto-http
+Successfully installed CacheControl-0.14.4 PyYAML-6.0.3 bandit-1.8.6 blinker-1.9.0 boolean.py-5.0 certifi-2026.10.23 charset_normalizer-3.5.2 click-8.5.0 coverage-7.17.0 cyclonedx-python-lib-9.1.0 defusedxml-0.7.1 filelock-4.2.4 flask-3.1.3 googleapis-common-protos-1.76.0 gunicorn-23.0.0 idna-3.20 iniconfig-2.3.1 itsdangerous-2.2.0 jinja2-3.1.6 license-expression-30.4.4 markdown-it-py-4.2.0 markupsafe-3.0.4 mdurl-0.1.2 msgpack-1.2.4 opentelemetry-api-1.45.0 opentelemetry-exporter-http-transport-0.66b0 opentelemetry-exporter-otlp-common-0.66b0 opentelemetry-exporter-otlp-proto-common-1.45.0 opentelemetry-exporter-otlp-proto-http-1.45.0 opentelemetry-instrumentation-0.66b0 opentelemetry-instrumentation-flask-0.66b0 opentelemetry-instrumentation-requests-0.66b0 opentelemetry-instrumentation-wsgi-0.66b0 opentelemetry-proto-1.45.0 opentelemetry-sdk-1.45.0 opentelemetry-semantic-conventions-0.66b0 opentelemetry-util-http-0.66b0 packageurl-python-0.17.6 packaging-26.3 pip-api-0.0.35 pip-audit-2.9.0 pip-requirements-parser-32.0.1 platformdirs-4.13.5 pluggy-1.7.0 protobuf-7.36.2 py-serializable-2.1.0 pygments-2.21.0 pyparsing-3.3.3 pytest-8.4.2 pytest-cov-7.0.0 requests-2.33.0 requests-mock-1.12.1 rich-15.0.0 ruff-0.13.2 sortedcontainers-2.4.0 stevedore-5.9.1 toml-0.10.2 typing-extensions-4.16.0 urllib3-2.8.0 werkzeug-3.1.9 wrapt-2.5.1
+docker compose -f docker-compose.dev.yml build
+ Image inventario-auth:dev Building 
+ Image inventario-itens:dev Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.26kB done
+#1 DONE 0.0s
+
+#2 [auth-service internal] load build definition from Dockerfile
+#2 transferring dockerfile: 30B
+#2 transferring dockerfile: 404B done
+#2 DONE 0.0s
+
+#3 [itens-service internal] load build definition from Dockerfile
+#3 transferring dockerfile: 443B done
+#3 DONE 0.0s
+
+#4 [auth] library/python:pull token for registry-1.docker.io
+#4 DONE 0.0s
+
+#5 [auth-service internal] load metadata for docker.io/library/python:3.12-slim
+#5 DONE 8.0s
+
+#6 [auth-service internal] load .dockerignore
+#6 transferring context: 125B done
+#6 DONE 0.0s
+
+#7 [itens-service internal] load build context
+#7 transferring context: 5.97kB done
+#7 DONE 0.0s
+
+#8 [auth-service 1/6] FROM docker.io/library/python:3.12-slim@sha256:a0f57064cbdcd6285fa45f51237ab0b35ea8ebaed06a1f5973e89e19dfb86704
+#8 resolve docker.io/library/python:3.12-slim@sha256:a0f57064cbdcd6285fa45f51237ab0b35ea8ebaed06a1f5973e89e19dfb86704 0.0s done
+#8 ...
+
+#9 [auth-service internal] load build context
+#9 transferring context: 1.92kB done
+#9 DONE 0.1s
+
+#8 [auth-service 1/6] FROM docker.io/library/python:3.12-slim@sha256:a0f57064cbdcd6285fa45f51237ab0b35ea8ebaed06a1f5973e89e19dfb86704
+#8 sha256:5c397e4307db7bd392eff1d36de88b04da2a137a4b906b7e0e4657bada560645 0B / 249B 0.2s
+#8 sha256:5c397e4307db7bd392eff1d36de88b04da2a137a4b906b7e0e4657bada560645 249B / 249B 0.2s done
+#8 sha256:b524bb3aba7394d85233f3a0a742b8f1b56179e8f61492f73d42a1ff118623b7 0B / 12.12MB 0.3s
+#8 sha256:be6443c06d3c9914acdca3ffb368adad23d4f282b55e71e730878ad3e3c3f75c 0B / 1.29MB 0.2s
+#8 sha256:f2be67225471500c788ce88c597eb5ea8336e912ad1ca4815650e0281afe2034 0B / 29.84MB 0.2s
+#8 sha256:b524bb3aba7394d85233f3a0a742b8f1b56179e8f61492f73d42a1ff118623b7 1.05MB / 12.12MB 0.6s
+#8 sha256:b524bb3aba7394d85233f3a0a742b8f1b56179e8f61492f73d42a1ff118623b7 2.10MB / 12.12MB 0.8s
+#8 sha256:b524bb3aba7394d85233f3a0a742b8f1b56179e8f61492f73d42a1ff118623b7 3.15MB / 12.12MB 0.9s
+#8 sha256:b524bb3aba7394d85233f3a0a742b8f1b56179e8f61492f73d42a1ff118623b7 4.19MB / 12.12MB 1.1s
+#8 sha256:b524bb3aba7394d85233f3a0a742b8f1b56179e8f61492f73d42a1ff118623b7 5.24MB / 12.12MB 1.2s
+#8 sha256:b524bb3aba7394d85233f3a0a742b8f1b56179e8f61492f73d42a1ff118623b7 6.29MB / 12.12MB 1.4s
+#8 sha256:b524bb3aba7394d85233f3a0a742b8f1b56179e8f61492f73d42a1ff118623b7 7.34MB / 12.12MB 1.5s
+#8 sha256:b524bb3aba7394d85233f3a0a742b8f1b56179e8f61492f73d42a1ff118623b7 8.39MB / 12.12MB 1.7s
+#8 sha256:b524bb3aba7394d85233f3a0a742b8f1b56179e8f61492f73d42a1ff118623b7 9.44MB / 12.12MB 1.8s
+#8 sha256:b524bb3aba7394d85233f3a0a742b8f1b56179e8f61492f73d42a1ff118623b7 10.49MB / 12.12MB 2.0s
+#8 sha256:b524bb3aba7394d85233f3a0a742b8f1b56179e8f61492f73d42a1ff118623b7 12.12MB / 12.12MB 2.1s
+#8 sha256:b524bb3aba7394d85233f3a0a742b8f1b56179e8f61492f73d42a1ff118623b7 12.12MB / 12.12MB 2.1s done
+#8 sha256:be6443c06d3c9914acdca3ffb368adad23d4f282b55e71e730878ad3e3c3f75c 1.05MB / 1.29MB 2.3s
+#8 sha256:be6443c06d3c9914acdca3ffb368adad23d4f282b55e71e730878ad3e3c3f75c 1.29MB / 1.29MB 2.4s done
+#8 sha256:be6443c06d3c9914acdca3ffb368adad23d4f282b55e71e730878ad3e3c3f75c 1.29MB / 1.29MB 2.4s done
+#8 sha256:f2be67225471500c788ce88c597eb5ea8336e912ad1ca4815650e0281afe2034 2.10MB / 29.84MB 2.7s
+#8 sha256:f2be67225471500c788ce88c597eb5ea8336e912ad1ca4815650e0281afe2034 4.19MB / 29.84MB 3.0s
+#8 sha256:f2be67225471500c788ce88c597eb5ea8336e912ad1ca4815650e0281afe2034 6.29MB / 29.84MB 3.3s
+#8 sha256:f2be67225471500c788ce88c597eb5ea8336e912ad1ca4815650e0281afe2034 8.39MB / 29.84MB 3.6s
+#8 sha256:f2be67225471500c788ce88c597eb5ea8336e912ad1ca4815650e0281afe2034 10.49MB / 29.84MB 3.9s
+#8 sha256:f2be67225471500c788ce88c597eb5ea8336e912ad1ca4815650e0281afe2034 12.58MB / 29.84MB 4.2s
+#8 sha256:f2be67225471500c788ce88c597eb5ea8336e912ad1ca4815650e0281afe2034 14.68MB / 29.84MB 4.4s
+#8 sha256:f2be67225471500c788ce88c597eb5ea8336e912ad1ca4815650e0281afe2034 16.78MB / 29.84MB 4.7s
+#8 sha256:f2be67225471500c788ce88c597eb5ea8336e912ad1ca4815650e0281afe2034 18.87MB / 29.84MB 5.0s
+#8 sha256:f2be67225471500c788ce88c597eb5ea8336e912ad1ca4815650e0281afe2034 20.97MB / 29.84MB 5.3s
+#8 sha256:f2be67225471500c788ce88c597eb5ea8336e912ad1ca4815650e0281afe2034 23.07MB / 29.84MB 5.4s
+#8 sha256:f2be67225471500c788ce88c597eb5ea8336e912ad1ca4815650e0281afe2034 25.17MB / 29.84MB 5.7s
+#8 sha256:f2be67225471500c788ce88c597eb5ea8336e912ad1ca4815650e0281afe2034 27.26MB / 29.84MB 6.0s
+#8 sha256:f2be67225471500c788ce88c597eb5ea8336e912ad1ca4815650e0281afe2034 29.36MB / 29.84MB 6.2s
+#8 sha256:f2be67225471500c788ce88c597eb5ea8336e912ad1ca4815650e0281afe2034 29.84MB / 29.84MB 6.2s done
+#8 extracting sha256:f2be67225471500c788ce88c597eb5ea8336e912ad1ca4815650e0281afe2034
+#8 extracting sha256:f2be67225471500c788ce88c597eb5ea8336e912ad1ca4815650e0281afe2034 0.5s done
+#8 extracting sha256:f2be67225471500c788ce88c597eb5ea8336e912ad1ca4815650e0281afe2034 0.5s done
+#8 extracting sha256:be6443c06d3c9914acdca3ffb368adad23d4f282b55e71e730878ad3e3c3f75c 0.1s done
+#8 extracting sha256:b524bb3aba7394d85233f3a0a742b8f1b56179e8f61492f73d42a1ff118623b7
+#8 extracting sha256:b524bb3aba7394d85233f3a0a742b8f1b56179e8f61492f73d42a1ff118623b7 0.2s done
+#8 extracting sha256:b524bb3aba7394d85233f3a0a742b8f1b56179e8f61492f73d42a1ff118623b7 0.2s done
+#8 extracting sha256:5c397e4307db7bd392eff1d36de88b04da2a137a4b906b7e0e4657bada560645 0.0s done
+#8 DONE 7.2s
+
+#10 [auth-service 2/6] WORKDIR /app
+#10 DONE 0.1s
+
+#11 [itens-service 3/6] COPY requirements-*.txt ./
+#11 DONE 0.0s
+
+#12 [itens-service 4/6] RUN pip install --no-cache-dir -r requirements-dev.txt
+#12 1.569 Collecting flask==3.1.3 (from -r /app/requirements-prd.txt (line 1))
+#12 1.870   Downloading flask-3.1.3-py3-none-any.whl.metadata (3.2 kB)
+#12 2.152 Collecting gunicorn==23.0.0 (from -r /app/requirements-prd.txt (line 2))
+#12 2.165   Downloading gunicorn-23.0.0-py3-none-any.whl.metadata (4.4 kB)
+#12 2.231 Collecting requests==2.33.0 (from -r /app/requirements-prd.txt (line 3))
+#12 2.243   Downloading requests-2.33.0-py3-none-any.whl.metadata (5.1 kB)
+#12 2.305 Collecting pytest==8.4.2 (from -r requirements-dev.txt (line 2))
+#12 2.320   Downloading pytest-8.4.2-py3-none-any.whl.metadata (7.7 kB)
+#12 2.355 Collecting pytest-cov==7.0.0 (from -r requirements-dev.txt (line 3))
+#12 2.368   Downloading pytest_cov-7.0.0-py3-none-any.whl.metadata (31 kB)
+#12 2.412 Collecting requests-mock==1.12.1 (from -r requirements-dev.txt (line 4))
+#12 2.426   Downloading requests_mock-1.12.1-py2.py3-none-any.whl.metadata (4.1 kB)
+#12 2.987 Collecting ruff==0.13.2 (from -r requirements-dev.txt (line 5))
+#12 3.002   Downloading ruff-0.13.2-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (25 kB)
+#12 3.043 Collecting bandit==1.8.6 (from -r requirements-dev.txt (line 6))
+#12 3.057   Downloading bandit-1.8.6-py3-none-any.whl.metadata (6.9 kB)
+#12 3.094 Collecting pip-audit==2.9.0 (from -r requirements-dev.txt (line 7))
+#12 3.108   Downloading pip_audit-2.9.0-py3-none-any.whl.metadata (27 kB)
+#12 3.155 Collecting opentelemetry-sdk==1.45.0 (from -r requirements-dev.txt (line 8))
+#12 3.168   Downloading opentelemetry_sdk-1.45.0-py3-none-any.whl.metadata (1.6 kB)
+#12 3.202 Collecting opentelemetry-exporter-otlp-proto-http==1.45.0 (from -r requirements-dev.txt (line 9))
+#12 3.219   Downloading opentelemetry_exporter_otlp_proto_http-1.45.0-py3-none-any.whl.metadata (3.1 kB)
+#12 3.258 Collecting opentelemetry-instrumentation-flask==0.66b0 (from -r requirements-dev.txt (line 10))
+#12 3.271   Downloading opentelemetry_instrumentation_flask-0.66b0-py3-none-any.whl.metadata (2.2 kB)
+#12 3.306 Collecting opentelemetry-instrumentation-requests==0.66b0 (from -r requirements-dev.txt (line 11))
+#12 3.319   Downloading opentelemetry_instrumentation_requests-0.66b0-py3-none-any.whl.metadata (2.6 kB)
+#12 3.338 Collecting blinker>=1.9.0 (from flask==3.1.3->-r /app/requirements-prd.txt (line 1))
+#12 3.352   Downloading blinker-1.9.0-py3-none-any.whl.metadata (1.6 kB)
+#12 3.384 Collecting click>=8.1.3 (from flask==3.1.3->-r /app/requirements-prd.txt (line 1))
+#12 3.397   Downloading click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+#12 3.419 Collecting itsdangerous>=2.2.0 (from flask==3.1.3->-r /app/requirements-prd.txt (line 1))
+#12 3.432   Downloading itsdangerous-2.2.0-py3-none-any.whl.metadata (1.9 kB)
+#12 3.460 Collecting jinja2>=3.1.2 (from flask==3.1.3->-r /app/requirements-prd.txt (line 1))
+#12 3.472   Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+#12 3.556 Collecting markupsafe>=2.1.1 (from flask==3.1.3->-r /app/requirements-prd.txt (line 1))
+#12 3.570   Downloading markupsafe-3.0.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+#12 3.609 Collecting werkzeug>=3.1.0 (from flask==3.1.3->-r /app/requirements-prd.txt (line 1))
+#12 3.622   Downloading werkzeug-3.1.9-py3-none-any.whl.metadata (4.1 kB)
+#12 3.650 Collecting packaging (from gunicorn==23.0.0->-r /app/requirements-prd.txt (line 2))
+#12 3.664   Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+#12 3.843 Collecting charset_normalizer<4,>=2 (from requests==2.33.0->-r /app/requirements-prd.txt (line 3))
+#12 3.857   Downloading charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (46 kB)
+#12 3.910 Collecting idna<4,>=2.5 (from requests==2.33.0->-r /app/requirements-prd.txt (line 3))
+#12 3.922   Downloading idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+#12 3.966 Collecting urllib3<3,>=1.26 (from requests==2.33.0->-r /app/requirements-prd.txt (line 3))
+#12 3.979   Downloading urllib3-2.8.0-py3-none-any.whl.metadata (7.4 kB)
+#12 4.020 Collecting certifi>=2023.5.7 (from requests==2.33.0->-r /app/requirements-prd.txt (line 3))
+#12 4.033   Downloading certifi-2026.10.23-py3-none-any.whl.metadata (2.5 kB)
+#12 4.053 Collecting iniconfig>=1 (from pytest==8.4.2->-r requirements-dev.txt (line 2))
+#12 4.066   Downloading iniconfig-2.3.1-py3-none-any.whl.metadata (2.8 kB)
+#12 4.092 Collecting pluggy<2,>=1.5 (from pytest==8.4.2->-r requirements-dev.txt (line 2))
+#12 4.106   Downloading pluggy-1.7.0-py3-none-any.whl.metadata (5.0 kB)
+#12 4.139 Collecting pygments>=2.7.2 (from pytest==8.4.2->-r requirements-dev.txt (line 2))
+#12 4.152   Downloading pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+#12 4.710 Collecting coverage>=7.10.6 (from coverage[toml]>=7.10.6->pytest-cov==7.0.0->-r requirements-dev.txt (line 3))
+#12 4.724   Downloading coverage-7.17.0-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (8.1 kB)
+#12 4.797 Collecting PyYAML>=5.3.1 (from bandit==1.8.6->-r requirements-dev.txt (line 6))
+#12 4.810   Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+#12 4.847 Collecting stevedore>=1.20.0 (from bandit==1.8.6->-r requirements-dev.txt (line 6))
+#12 4.861   Downloading stevedore-5.9.1-py3-none-any.whl.metadata (2.3 kB)
+#12 4.909 Collecting rich (from bandit==1.8.6->-r requirements-dev.txt (line 6))
+#12 4.922   Downloading rich-15.0.0-py3-none-any.whl.metadata (18 kB)
+#12 4.956 Collecting CacheControl>=0.13.0 (from CacheControl[filecache]>=0.13.0->pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+#12 4.970   Downloading cachecontrol-0.14.4-py3-none-any.whl.metadata (3.1 kB)
+#12 5.022 Collecting cyclonedx-python-lib<10,>=5 (from pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+#12 5.036   Downloading cyclonedx_python_lib-9.1.0-py3-none-any.whl.metadata (6.5 kB)
+#12 5.069 Collecting pip-api>=0.0.28 (from pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+#12 5.083   Downloading pip_api-0.0.35-py3-none-any.whl.metadata (17 kB)
+#12 5.111 Collecting pip-requirements-parser>=32.0.0 (from pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+#12 5.124   Downloading pip_requirements_parser-32.0.1-py3-none-any.whl.metadata (9.3 kB)
+#12 5.162 Collecting toml>=0.10 (from pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+#12 5.175   Downloading toml-0.10.2-py2.py3-none-any.whl.metadata (7.1 kB)
+#12 5.212 Collecting platformdirs>=4.2.0 (from pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+#12 5.225   Downloading platformdirs-4.13.5-py3-none-any.whl.metadata (5.5 kB)
+#12 5.259 Collecting opentelemetry-api==1.45.0 (from opentelemetry-sdk==1.45.0->-r requirements-dev.txt (line 8))
+#12 5.274   Downloading opentelemetry_api-1.45.0-py3-none-any.whl.metadata (1.4 kB)
+#12 5.305 Collecting opentelemetry-semantic-conventions==0.66b0 (from opentelemetry-sdk==1.45.0->-r requirements-dev.txt (line 8))
+#12 5.320   Downloading opentelemetry_semantic_conventions-0.66b0-py3-none-any.whl.metadata (2.4 kB)
+#12 5.349 Collecting typing-extensions>=4.5.0 (from opentelemetry-sdk==1.45.0->-r requirements-dev.txt (line 8))
+#12 5.362   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+#12 5.400 Collecting googleapis-common-protos~=1.52 (from opentelemetry-exporter-otlp-proto-http==1.45.0->-r requirements-dev.txt (line 9))
+#12 5.414   Downloading googleapis_common_protos-1.76.0-py3-none-any.whl.metadata (8.5 kB)
+#12 5.440 Collecting opentelemetry-exporter-http-transport==0.66b0 (from opentelemetry-exporter-http-transport[urllib3]==0.66b0->opentelemetry-exporter-otlp-proto-http==1.45.0->-r requirements-dev.txt (line 9))
+#12 5.453   Downloading opentelemetry_exporter_http_transport-0.66b0-py3-none-any.whl.metadata (2.3 kB)
+#12 5.470 Collecting opentelemetry-exporter-otlp-common==0.66b0 (from opentelemetry-exporter-otlp-proto-http==1.45.0->-r requirements-dev.txt (line 9))
+#12 5.485   Downloading opentelemetry_exporter_otlp_common-0.66b0-py3-none-any.whl.metadata (1.9 kB)
+#12 5.507 Collecting opentelemetry-exporter-otlp-proto-common==1.45.0 (from opentelemetry-exporter-otlp-proto-http==1.45.0->-r requirements-dev.txt (line 9))
+#12 5.520   Downloading opentelemetry_exporter_otlp_proto_common-1.45.0-py3-none-any.whl.metadata (1.8 kB)
+#12 5.555 Collecting opentelemetry-proto==1.45.0 (from opentelemetry-exporter-otlp-proto-http==1.45.0->-r requirements-dev.txt (line 9))
+#12 5.568   Downloading opentelemetry_proto-1.45.0-py3-none-any.whl.metadata (2.3 kB)
+#12 5.606 Collecting opentelemetry-instrumentation-wsgi==0.66b0 (from opentelemetry-instrumentation-flask==0.66b0->-r requirements-dev.txt (line 10))
+#12 5.621   Downloading opentelemetry_instrumentation_wsgi-0.66b0-py3-none-any.whl.metadata (2.1 kB)
+#12 5.658 Collecting opentelemetry-instrumentation==0.66b0 (from opentelemetry-instrumentation-flask==0.66b0->-r requirements-dev.txt (line 10))
+#12 5.673   Downloading opentelemetry_instrumentation-0.66b0-py3-none-any.whl.metadata (7.2 kB)
+#12 5.707 Collecting opentelemetry-util-http==0.66b0 (from opentelemetry-instrumentation-flask==0.66b0->-r requirements-dev.txt (line 10))
+#12 5.721   Downloading opentelemetry_util_http-0.66b0-py3-none-any.whl.metadata (2.6 kB)
+#12 6.209 Collecting wrapt<3.0.0,>=1.0.0 (from opentelemetry-instrumentation==0.66b0->opentelemetry-instrumentation-flask==0.66b0->-r requirements-dev.txt (line 10))
+#12 6.223   Downloading wrapt-2.5.1-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (7.6 kB)
+#12 6.418 Collecting protobuf<8.0,>=5.0 (from opentelemetry-proto==1.45.0->opentelemetry-exporter-otlp-proto-http==1.45.0->-r requirements-dev.txt (line 9))
+#12 6.433   Downloading protobuf-7.36.2-cp310-abi3-manylinux2014_x86_64.whl.metadata (595 bytes)
+#12 6.543 Collecting msgpack<2.0.0,>=0.5.2 (from CacheControl>=0.13.0->CacheControl[filecache]>=0.13.0->pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+#12 6.560   Downloading msgpack-1.2.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (8.3 kB)
+#12 6.604 Collecting filelock>=3.8.0 (from CacheControl[filecache]>=0.13.0->pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+#12 6.617   Downloading filelock-4.2.4-py3-none-any.whl.metadata (2.0 kB)
+#12 6.650 Collecting license-expression<31,>=30 (from cyclonedx-python-lib<10,>=5->pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+#12 6.664   Downloading license_expression-30.4.4-py3-none-any.whl.metadata (11 kB)
+#12 6.697 Collecting packageurl-python<2,>=0.11 (from cyclonedx-python-lib<10,>=5->pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+#12 6.710   Downloading packageurl_python-0.17.6-py3-none-any.whl.metadata (5.1 kB)
+#12 6.744 Collecting py-serializable<3.0.0,>=2.0.0 (from cyclonedx-python-lib<10,>=5->pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+#12 6.757   Downloading py_serializable-2.1.0-py3-none-any.whl.metadata (4.3 kB)
+#12 6.779 Collecting sortedcontainers<3.0.0,>=2.4.0 (from cyclonedx-python-lib<10,>=5->pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+#12 6.793   Downloading sortedcontainers-2.4.0-py2.py3-none-any.whl.metadata (10 kB)
+#12 6.822 Requirement already satisfied: pip in /usr/local/lib/python3.12/site-packages (from pip-api>=0.0.28->pip-audit==2.9.0->-r requirements-dev.txt (line 7)) (25.0.1)
+#12 6.861 Collecting pyparsing (from pip-requirements-parser>=32.0.0->pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+#12 6.877   Downloading pyparsing-3.3.3-py3-none-any.whl.metadata (5.9 kB)
+#12 6.909 Collecting markdown-it-py>=2.2.0 (from rich->bandit==1.8.6->-r requirements-dev.txt (line 6))
+#12 6.922   Downloading markdown_it_py-4.2.0-py3-none-any.whl.metadata (7.4 kB)
+#12 6.967 Collecting boolean.py>=4.0 (from license-expression<31,>=30->cyclonedx-python-lib<10,>=5->pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+#12 6.984   Downloading boolean_py-5.0-py3-none-any.whl.metadata (2.3 kB)
+#12 7.004 Collecting mdurl~=0.1 (from markdown-it-py>=2.2.0->rich->bandit==1.8.6->-r requirements-dev.txt (line 6))
+#12 7.018   Downloading mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+#12 7.047 Collecting defusedxml<0.8.0,>=0.7.1 (from py-serializable<3.0.0,>=2.0.0->cyclonedx-python-lib<10,>=5->pip-audit==2.9.0->-r requirements-dev.txt (line 7))
+#12 7.063   Downloading defusedxml-0.7.1-py2.py3-none-any.whl.metadata (32 kB)
+#12 7.100 Downloading flask-3.1.3-py3-none-any.whl (103 kB)
+#12 7.148 Downloading gunicorn-23.0.0-py3-none-any.whl (85 kB)
+#12 7.185 Downloading requests-2.33.0-py3-none-any.whl (65 kB)
+#12 7.215 Downloading pytest-8.4.2-py3-none-any.whl (365 kB)
+#12 7.329 Downloading pytest_cov-7.0.0-py3-none-any.whl (22 kB)
+#12 7.348 Downloading requests_mock-1.12.1-py2.py3-none-any.whl (27 kB)
+#12 7.373 Downloading ruff-0.13.2-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (13.4 MB)
+#12 9.932    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13.4/13.4 MB 5.3 MB/s eta 0:00:00
+#12 9.946 Downloading bandit-1.8.6-py3-none-any.whl (133 kB)
+#12 9.982 Downloading pip_audit-2.9.0-py3-none-any.whl (58 kB)
+#12 10.01 Downloading opentelemetry_sdk-1.45.0-py3-none-any.whl (140 kB)
+#12 10.05 Downloading opentelemetry_exporter_otlp_proto_http-1.45.0-py3-none-any.whl (22 kB)
+#12 10.08 Downloading opentelemetry_instrumentation_flask-0.66b0-py3-none-any.whl (14 kB)
+#12 10.10 Downloading opentelemetry_instrumentation_requests-0.66b0-py3-none-any.whl (13 kB)
+#12 10.11 Downloading opentelemetry_api-1.45.0-py3-none-any.whl (60 kB)
+#12 10.14 Downloading opentelemetry_exporter_http_transport-0.66b0-py3-none-any.whl (12 kB)
+#12 10.16 Downloading opentelemetry_exporter_otlp_common-0.66b0-py3-none-any.whl (12 kB)
+#12 10.18 Downloading opentelemetry_exporter_otlp_proto_common-1.45.0-py3-none-any.whl (15 kB)
+#12 10.20 Downloading opentelemetry_instrumentation-0.66b0-py3-none-any.whl (36 kB)
+#12 10.22 Downloading opentelemetry_instrumentation_wsgi-0.66b0-py3-none-any.whl (13 kB)
+#12 10.25 Downloading opentelemetry_proto-1.45.0-py3-none-any.whl (72 kB)
+#12 10.27 Downloading opentelemetry_semantic_conventions-0.66b0-py3-none-any.whl (206 kB)
+#12 10.32 Downloading opentelemetry_util_http-0.66b0-py3-none-any.whl (8.4 kB)
+#12 10.33 Downloading blinker-1.9.0-py3-none-any.whl (8.5 kB)
+#12 10.34 Downloading cachecontrol-0.14.4-py3-none-any.whl (22 kB)
+#12 10.36 Downloading certifi-2026.10.23-py3-none-any.whl (135 kB)
+#12 10.39 Downloading charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (257 kB)
+#12 10.45 Downloading click-8.5.0-py3-none-any.whl (125 kB)
+#12 10.48 Downloading coverage-7.17.0-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (261 kB)
+#12 10.54 Downloading cyclonedx_python_lib-9.1.0-py3-none-any.whl (374 kB)
+#12 10.62 Downloading googleapis_common_protos-1.76.0-py3-none-any.whl (307 kB)
+#12 10.68 Downloading idna-3.20-py3-none-any.whl (69 kB)
+#12 10.71 Downloading iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
+#12 10.73 Downloading itsdangerous-2.2.0-py3-none-any.whl (16 kB)
+#12 10.74 Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+#12 10.77 Downloading markupsafe-3.0.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+#12 10.79 Downloading packaging-26.3-py3-none-any.whl (129 kB)
+#12 10.82 Downloading pip_api-0.0.35-py3-none-any.whl (123 kB)
+#12 10.87 Downloading pip_requirements_parser-32.0.1-py3-none-any.whl (35 kB)
+#12 10.89 Downloading platformdirs-4.13.5-py3-none-any.whl (32 kB)
+#12 10.90 Downloading pluggy-1.7.0-py3-none-any.whl (27 kB)
+#12 10.92 Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
+#12 11.13    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 6.3 MB/s eta 0:00:00
+#12 11.14 Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+#12 11.27    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 807.9/807.9 kB 6.6 MB/s eta 0:00:00
+#12 11.28 Downloading rich-15.0.0-py3-none-any.whl (310 kB)
+#12 11.35 Downloading stevedore-5.9.1-py3-none-any.whl (54 kB)
+#12 11.37 Downloading toml-0.10.2-py2.py3-none-any.whl (16 kB)
+#12 11.39 Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+#12 11.41 Downloading urllib3-2.8.0-py3-none-any.whl (135 kB)
+#12 11.45 Downloading werkzeug-3.1.9-py3-none-any.whl (228 kB)
+#12 11.50 Downloading filelock-4.2.4-py3-none-any.whl (162 kB)
+#12 11.54 Downloading license_expression-30.4.4-py3-none-any.whl (120 kB)
+#12 11.57 Downloading markdown_it_py-4.2.0-py3-none-any.whl (91 kB)
+#12 11.60 Downloading msgpack-1.2.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (475 kB)
+#12 11.69 Downloading packageurl_python-0.17.6-py3-none-any.whl (36 kB)
+#12 11.71 Downloading protobuf-7.36.2-cp310-abi3-manylinux2014_x86_64.whl (343 kB)
+#12 11.79 Downloading py_serializable-2.1.0-py3-none-any.whl (23 kB)
+#12 11.81 Downloading sortedcontainers-2.4.0-py2.py3-none-any.whl (29 kB)
+#12 11.83 Downloading wrapt-2.5.1-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (250 kB)
+#12 11.88 Downloading pyparsing-3.3.3-py3-none-any.whl (126 kB)
+#12 11.92 Downloading boolean_py-5.0-py3-none-any.whl (26 kB)
+#12 11.94 Downloading defusedxml-0.7.1-py2.py3-none-any.whl (25 kB)
+#12 11.96 Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+#12 12.09 Installing collected packages: sortedcontainers, boolean.py, wrapt, urllib3, typing-extensions, toml, stevedore, ruff, PyYAML, pyparsing, pygments, protobuf, pluggy, platformdirs, pip-api, packaging, packageurl-python, opentelemetry-util-http, msgpack, mdurl, markupsafe, license-expression, itsdangerous, iniconfig, idna, filelock, defusedxml, coverage, click, charset_normalizer, certifi, blinker, werkzeug, requests, pytest, py-serializable, pip-requirements-parser, opentelemetry-proto, opentelemetry-api, markdown-it-py, jinja2, gunicorn, googleapis-common-protos, rich, requests-mock, pytest-cov, opentelemetry-semantic-conventions, opentelemetry-exporter-otlp-proto-common, opentelemetry-exporter-http-transport, flask, cyclonedx-python-lib, CacheControl, opentelemetry-sdk, opentelemetry-instrumentation, bandit, pip-audit, opentelemetry-instrumentation-wsgi, opentelemetry-instrumentation-requests, opentelemetry-exporter-otlp-common, opentelemetry-instrumentation-flask, opentelemetry-exporter-otlp-proto-http
+#12 15.24 Successfully installed CacheControl-0.14.4 PyYAML-6.0.3 bandit-1.8.6 blinker-1.9.0 boolean.py-5.0 certifi-2026.10.23 charset_normalizer-3.5.2 click-8.5.0 coverage-7.17.0 cyclonedx-python-lib-9.1.0 defusedxml-0.7.1 filelock-4.2.4 flask-3.1.3 googleapis-common-protos-1.76.0 gunicorn-23.0.0 idna-3.20 iniconfig-2.3.1 itsdangerous-2.2.0 jinja2-3.1.6 license-expression-30.4.4 markdown-it-py-4.2.0 markupsafe-3.0.4 mdurl-0.1.2 msgpack-1.2.4 opentelemetry-api-1.45.0 opentelemetry-exporter-http-transport-0.66b0 opentelemetry-exporter-otlp-common-0.66b0 opentelemetry-exporter-otlp-proto-common-1.45.0 opentelemetry-exporter-otlp-proto-http-1.45.0 opentelemetry-instrumentation-0.66b0 opentelemetry-instrumentation-flask-0.66b0 opentelemetry-instrumentation-requests-0.66b0 opentelemetry-instrumentation-wsgi-0.66b0 opentelemetry-proto-1.45.0 opentelemetry-sdk-1.45.0 opentelemetry-semantic-conventions-0.66b0 opentelemetry-util-http-0.66b0 packageurl-python-0.17.6 packaging-26.3 pip-api-0.0.35 pip-audit-2.9.0 pip-requirements-parser-32.0.1 platformdirs-4.13.5 pluggy-1.7.0 protobuf-7.36.2 py-serializable-2.1.0 pygments-2.21.0 pyparsing-3.3.3 pytest-8.4.2 pytest-cov-7.0.0 requests-2.33.0 requests-mock-1.12.1 rich-15.0.0 ruff-0.13.2 sortedcontainers-2.4.0 stevedore-5.9.1 toml-0.10.2 typing-extensions-4.16.0 urllib3-2.8.0 werkzeug-3.1.9 wrapt-2.5.1
+#12 15.24 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#12 20.62 
+#12 20.62 [notice] A new release of pip is available: 25.0.1 -> 26.2.2
+#12 20.62 [notice] To update, run: pip install --upgrade pip
+#12 DONE 20.8s
+
+#13 [auth-service 3/6] COPY requirements-*.txt ./
+#13 CACHED
+
+#14 [auth-service 4/6] RUN pip install --no-cache-dir -r requirements-dev.txt
+#14 CACHED
+
+#15 [auth-service 5/6] COPY auth-service/app.py .
+#15 DONE 0.1s
+
+#16 [itens-service 5/6] COPY itens-service/app.py .
+#16 DONE 0.1s
+
+#17 [itens-service 6/6] RUN useradd -m appuser && mkdir /data && chown appuser /data
+#17 DONE 0.3s
+
+#18 [auth-service 6/6] RUN useradd -m appuser
+#18 DONE 0.3s
+
+#19 [auth-service] exporting to image
+#19 exporting layers
+#19 exporting layers 2.9s done
+#19 exporting manifest sha256:333b555116907a1449a1608d5537a9c0f55289613344f408f736283be11215b1 0.0s done
+#19 exporting config sha256:909a845a636e74865a5a638c44849d177a1cbbdff9992dd7cc4e361455174e7f 0.0s done
+#19 exporting attestation manifest sha256:e08cb1ae6d08e05be3fc50cc33d138f72d4e2c614a2fb547611e4861e306c697
+#19 exporting attestation manifest sha256:e08cb1ae6d08e05be3fc50cc33d138f72d4e2c614a2fb547611e4861e306c697 0.0s done
+#19 exporting manifest list sha256:1026ef76940cdc3f830bc423f308b9ab444d6fc847a01eacbf6b801cee30bc93 0.0s done
+#19 naming to docker.io/library/inventario-auth:dev done
+#19 unpacking to docker.io/library/inventario-auth:dev
+#19 unpacking to docker.io/library/inventario-auth:dev 0.8s done
+#19 DONE 3.9s
+
+#20 [itens-service] exporting to image
+#20 exporting layers 2.9s done
+#20 exporting manifest sha256:4f6521523073509029fd75e5d03900036e798683ecced8d4c90feec13ca6aedf 0.0s done
+#20 exporting config sha256:d8557a4d53fe98ed347968cb873cbcd0016239209d077b6d3422b2882144aefc 0.0s done
+#20 exporting attestation manifest sha256:ffa0f68b9a2df80d3a70710f3cc587de1ca4260bd8b10c9438c5671b94cbfee1 0.0s done
+#20 exporting manifest list sha256:c76c311e3e200aa4b2b4c426a1e4da2b97fbdddcc8629ff1d8e09ae0339fe976 0.0s done
+#20 naming to docker.io/library/inventario-itens:dev done
+#20 unpacking to docker.io/library/inventario-itens:dev 0.8s done
+#20 DONE 3.9s
+
+#21 [auth-service] resolving provenance for metadata file
+#21 DONE 0.0s
+
+#22 [itens-service] resolving provenance for metadata file
+#22 DONE 0.0s
+ Image inventario-itens:dev Built 
+ Image inventario-auth:dev Built 
+[?2004h]0;gil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx: ~/Secretária/ProjetoFinal/ProjetoFinal[01;32mgil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx[00m:[01;34m~/Secretária/ProjetoFinal/ProjetoFinal[00m$ make test_dev 
+[?2004l"/home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal/venv/bin/python" -m ruff check . | tee reports/dev-lint.txt
+All checks passed!
+cd auth-service && "/home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal/venv/bin/python" -m pytest -v --cov=app tests | tee ../reports/dev-unitarios-auth.txt
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.2, pluggy-1.7.0 -- /home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal/venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal/auth-service
+plugins: requests-mock-1.12.1, cov-7.0.0, platformdirs-4.13.5
+collecting ... collected 5 items
+
+tests/test_app.py::test_health PASSED                                    [ 20%]
+tests/test_app.py::test_credenciais_corretas PASSED                      [ 40%]
+tests/test_app.py::test_credenciais_erradas[dados0] PASSED               [ 60%]
+tests/test_app.py::test_credenciais_erradas[dados1] PASSED               [ 80%]
+tests/test_app.py::test_credenciais_erradas[dados2] PASSED               [100%]
+
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.3-final-0 ________________
+
+Name     Stmts   Miss  Cover
+----------------------------
+app.py      33     10    70%
+----------------------------
+TOTAL       33     10    70%
+============================== 5 passed in 0.22s ===============================
+cd itens-service && "/home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal/venv/bin/python" -m pytest -v --cov=app tests | tee ../reports/dev-unitarios-itens.txt
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.2, pluggy-1.7.0 -- /home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal/venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal/itens-service
+plugins: requests-mock-1.12.1, cov-7.0.0, platformdirs-4.13.5
+collecting ... collected 17 items
+
+tests/test_app.py::test_validar_item[dados0-True] PASSED                 [  5%]
+tests/test_app.py::test_validar_item[dados1-False] PASSED                [ 11%]
+tests/test_app.py::test_validar_item[dados2-False] PASSED                [ 17%]
+tests/test_app.py::test_validar_item[dados3-False] PASSED                [ 23%]
+tests/test_app.py::test_validar_item[dados4-False] PASSED                [ 29%]
+tests/test_app.py::test_health PASSED                                    [ 35%]
+tests/test_app.py::test_listar_vazio PASSED                              [ 41%]
+tests/test_app.py::test_item_inexistente PASSED                          [ 47%]
+tests/test_app.py::test_criar_e_obter PASSED                             [ 52%]
+tests/test_app.py::test_criar_dados_invalidos PASSED                     [ 58%]
+tests/test_app.py::test_atualizar PASSED                                 [ 64%]
+tests/test_app.py::test_atualizar_inexistente PASSED                     [ 70%]
+tests/test_app.py::test_apagar PASSED                                    [ 76%]
+tests/test_app.py::test_apagar_inexistente PASSED                        [ 82%]
+tests/test_app.py::test_sem_credenciais PASSED                           [ 88%]
+tests/test_app.py::test_credenciais_erradas PASSED                       [ 94%]
+tests/test_app.py::test_auth_service_indisponivel PASSED                 [100%]
+
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.3-final-0 ________________
+
+Name     Stmts   Miss  Cover
+----------------------------
+app.py     113     16    86%
+----------------------------
+TOTAL      113     16    86%
+============================== 17 passed in 0.46s ==============================
+venv/bin/bandit -r auth-service itens-service -x auth-service/tests,itens-service/tests | tee reports/seguranca-bandit.txt
+[main]	INFO	profile include tests: None
+[main]	INFO	profile exclude tests: None
+[main]	INFO	cli include tests: None
+[main]	INFO	cli exclude tests: None
+[main]	INFO	running on Python 3.12.3
+Run started:2026-10-26 18:01:36.602078
+
+Test results:
+	No issues identified.
+
+Code scanned:
+	Total lines of code: 163
+	Total lines skipped (#nosec): 0
+	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 0
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0
+		Low: 0
+		Medium: 0
+		High: 0
+	Total issues (by confidence):
+		Undefined: 0
+		Low: 0
+		Medium: 0
+		High: 0
+Files skipped (0):
+venv/bin/pip-audit -r requirements-prd.txt | tee reports/seguranca-pip-audit.txt
+No known vulnerabilities found
+[?2004h]0;gil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx: ~/Secretária/ProjetoFinal/ProjetoFinal[01;32mgil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx[00m:[01;34m~/Secretária/ProjetoFinal/ProjetoFinal[00m$ make start_dev
+[?2004ldocker compose -f docker-compose.dev.yml up -d
+ Image jaegertracing/jaeger:latest Pulling 
+ 44136fa355b3 Already exists 0B
+ 06ac590c9ca4 Pulling fs layer 0B
+ b24ca79dc2c7 Pulling fs layer 0B
+ bd739c61bd6f Pulling fs layer 0B
+ 6360b05c0706 Pulling fs layer 0B
+ 5688bf1ca98d Download complete 0B
+ 06ac590c9ca4 Download complete 0B
+ b24ca79dc2c7 Download complete 0B
+ bd739c61bd6f Download complete 0B
+ b24ca79dc2c7 Pull complete 0B
+ bd739c61bd6f Pull complete 0B
+ 6360b05c0706 Downloading 1.049MB
+ 6360b05c0706 Downloading 2.097MB
+ 6360b05c0706 Downloading 3.146MB
+ 6360b05c0706 Downloading 3.146MB
+ 6360b05c0706 Downloading 4.194MB
+ 6360b05c0706 Downloading 5.243MB
+ 6360b05c0706 Downloading 5.243MB
+ 6360b05c0706 Downloading 6.291MB
+ 6360b05c0706 Downloading 7.34MB
+ 6360b05c0706 Downloading 8.389MB
+ 6360b05c0706 Downloading 8.389MB
+ 6360b05c0706 Downloading 9.437MB
+ 6360b05c0706 Downloading 10.49MB
+ 6360b05c0706 Downloading 11.53MB
+ 6360b05c0706 Downloading 11.53MB
+ 6360b05c0706 Downloading 12.58MB
+ 6360b05c0706 Downloading 13.63MB
+ 6360b05c0706 Downloading 13.63MB
+ 6360b05c0706 Downloading 14.68MB
+ 6360b05c0706 Downloading 15.73MB
+ 6360b05c0706 Downloading 16.78MB
+ 6360b05c0706 Downloading 16.78MB
+ 6360b05c0706 Downloading 17.83MB
+ 6360b05c0706 Downloading 18.87MB
+ 6360b05c0706 Downloading 18.87MB
+ 6360b05c0706 Downloading 19.92MB
+ 6360b05c0706 Downloading 20.97MB
+ 6360b05c0706 Downloading 20.97MB
+ 6360b05c0706 Downloading 22.02MB
+ 6360b05c0706 Downloading 23.07MB
+ 6360b05c0706 Downloading 24.12MB
+ 6360b05c0706 Downloading 24.12MB
+ 6360b05c0706 Downloading 25.17MB
+ 6360b05c0706 Downloading 25.17MB
+ 6360b05c0706 Downloading 26.21MB
+ 6360b05c0706 Downloading 27.26MB
+ 6360b05c0706 Downloading 28.31MB
+ 6360b05c0706 Downloading 28.31MB
+ 6360b05c0706 Downloading 29.36MB
+ 6360b05c0706 Downloading 30.41MB
+ 6360b05c0706 Downloading 31.46MB
+ 6360b05c0706 Downloading 32.51MB
+ 6360b05c0706 Downloading 32.51MB
+ 6360b05c0706 Downloading 33.55MB
+ 6360b05c0706 Downloading 34.6MB
+ 6360b05c0706 Downloading 34.6MB
+ 6360b05c0706 Downloading 35.65MB
+ 6360b05c0706 Downloading 36.7MB
+ 6360b05c0706 Downloading 37.75MB
+ 6360b05c0706 Downloading 38.8MB
+ 6360b05c0706 Downloading 38.8MB
+ 6360b05c0706 Downloading 39.85MB
+ 6360b05c0706 Downloading 40.89MB
+ 6360b05c0706 Downloading 41.94MB
+ 6360b05c0706 Downloading 41.94MB
+ 6360b05c0706 Downloading 42.99MB
+ 6360b05c0706 Downloading 42.99MB
+ 6360b05c0706 Downloading 44.04MB
+ 6360b05c0706 Downloading 45.09MB
+ 6360b05c0706 Downloading 46.14MB
+ 6360b05c0706 Downloading 46.14MB
+ 6360b05c0706 Downloading 47.19MB
+ 6360b05c0706 Downloading 48.23MB
+ 6360b05c0706 Downloading 48.23MB
+ 6360b05c0706 Downloading 49.28MB
+ 6360b05c0706 Downloading 49.28MB
+ 6360b05c0706 Downloading 50.33MB
+ 6360b05c0706 Download complete 0B
+ 6360b05c0706 Extracting 1B
+ 6360b05c0706 Extracting 1B
+ 06ac590c9ca4 Pull complete 0B
+ 6360b05c0706 Pull complete 0B
+ Image jaegertracing/jaeger:latest Pulled 
+ Network inventario-dev_default Creating 
+ Network inventario-dev_default Creating 
+ Volume inventario-dev_itens-data-dev Creating 
+ Volume inventario-dev_itens-data-dev Creating 
+ Volume inventario-dev_itens-data-dev Created 
+ Volume inventario-dev_itens-data-dev Created 
+ Network inventario-dev_default Created 
+ Network inventario-dev_default Created 
+ Container inventario-dev-auth-service-1 Creating 
+ Container inventario-dev-jaeger-1 Creating 
+ Container inventario-dev-auth-service-1 Created 
+ Container inventario-dev-jaeger-1 Created 
+ Container inventario-dev-itens-service-1 Creating 
+ Container inventario-dev-itens-service-1 Created 
+ Container inventario-dev-jaeger-1 Starting 
+ Container inventario-dev-auth-service-1 Starting 
+ Container inventario-dev-jaeger-1 Started 
+ Container inventario-dev-auth-service-1 Started 
+ Container inventario-dev-itens-service-1 Starting 
+ Container inventario-dev-itens-service-1 Started 
+sleep 10
+"/home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal/venv/bin/python" -m pytest -v tests/dev | tee reports/dev-tracing.txt
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.2, pluggy-1.7.0 -- /home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal/venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal
+plugins: requests-mock-1.12.1, cov-7.0.0, platformdirs-4.13.5
+collecting ... collected 1 item
+
+tests/dev/test_tracing.py::test_trace_chega_ao_jaeger PASSED             [100%]
+
+============================== 1 passed in 6.06s ===============================
+
+NAME                             IMAGE                         COMMAND                  SERVICE         CREATED          STATUS          PORTS
+inventario-dev-auth-service-1    inventario-auth:dev           "gunicorn -b 0.0.0.0…"   auth-service    17 seconds ago   Up 16 seconds   0.0.0.0:5001->5001/tcp, [::]:5001->5001/tcp
+inventario-dev-itens-service-1   inventario-itens:dev          "gunicorn -b 0.0.0.0…"   itens-service   17 seconds ago   Up 16 seconds   0.0.0.0:5002->5002/tcp, [::]:5002->5002/tcp
+inventario-dev-jaeger-1          jaegertracing/jaeger:latest   "/cmd/jaeger/jaeger-…"   jaeger          17 seconds ago   Up 16 seconds   4317-4318/tcp, 5778-5779/tcp, 9411/tcp, 13132-13133/tcp, 14250/tcp, 14268/tcp, 0.0.0.0:16686->16686/tcp, [::]:16686->16686/tcp
+abrir API: http://localhost:5002/api/itens
+abrir Jaeger: http://localhost:16686
+[?2004h]0;gil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx: ~/Secretária/ProjetoFinal/ProjetoFinal[01;32mgil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx[00m:[01;34m~/Secretária/ProjetoFinal/ProjetoFinal[00m$ make stop_dev
+[?2004ldocker compose -f docker-compose.dev.yml down
+ Container inventario-dev-itens-service-1 Stopping 
+ Container inventario-dev-itens-service-1 Stopped 
+ Container inventario-dev-itens-service-1 Removing 
+ Container inventario-dev-itens-service-1 Removed 
+ Container inventario-dev-jaeger-1 Stopping 
+ Container inventario-dev-auth-service-1 Stopping 
+ Container inventario-dev-jaeger-1 Stopped 
+ Container inventario-dev-jaeger-1 Removing 
+ Container inventario-dev-jaeger-1 Removed 
+ Container inventario-dev-auth-service-1 Stopped 
+ Container inventario-dev-auth-service-1 Removing 
+ Container inventario-dev-auth-service-1 Removed 
+ Network inventario-dev_default Removing 
+ Network inventario-dev_default Removed 
+[?2004h]0;gil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx: ~/Secretária/ProjetoFinal/ProjetoFinal[01;32mgil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx[00m:[01;34m~/Secretária/ProjetoFinal/ProjetoFinal[00m$ make buidl[K[Kld-[K_stg 
+[?2004l..+..+..........+.........+......+...+.....+......+.+...+..+...+.......+........+......+.+.....+.+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*.+..+....+..+............+.......+......+..+.+..+...+....+..+...+.+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*......+...+..+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+.......+..+...+...+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*...+.....+.........+...+....+.....+....+............+.....+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*...+.....+.+........+.+...............+...+...+..+......+......+.+.....+...............+.........+...+.+............+..+.............+..............+....+.....+................+...+..+.+........+.......+..+.......+........+...+...+.......+.............................+...+......+....+...............+..+....+..............+.+..+....+...+..+...+.+......+........+...+.......+..+.........+......+.+........+.+......+........+....+...+........+....+...+...+..+......................+......+......+...+......+...........+...+.+..+.......+...........+.+...+......+.....+....+.....+..................+.......+...+...+..+.........+..........+...........+...+......+......+.......+...+...+............+..+............+...+.+......+........+...+...+....+..+...+......+...............+.+...+..+...+.............+...+.....+....+..+.+..+...+..................+.+..............+......+..........+.....+...+.+......+...........+..........+.....+...+....+......+..+.........+................+..+...+...+....+............+.....+...+.+..+...+.......+.....+....+...+..+.+........+......+...+.......+...+..+...+......+.........+.............+...+.....+............+...+.+.....+.............+..+.+.....+............+.+..+.......+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-----
+docker compose build
+ Image ghcr.io/gil2004/inventario-auth:latest Building 
+ Image ghcr.io/gil2004/inventario-itens:latest Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.16kB done
+#1 DONE 0.0s
+
+#2 [auth-service internal] load build definition from Dockerfile
+#2 transferring dockerfile: 404B done
+#2 DONE 0.0s
+
+#3 [itens-service internal] load build definition from Dockerfile
+#3 transferring dockerfile: 443B done
+#3 DONE 0.0s
+
+#4 [itens-service internal] load metadata for docker.io/library/python:3.12-slim
+#4 DONE 1.3s
+
+#5 [auth-service internal] load .dockerignore
+#5 transferring context: 125B done
+#5 DONE 0.0s
+
+#6 [auth-service 1/6] FROM docker.io/library/python:3.12-slim@sha256:a0f57064cbdcd6285fa45f51237ab0b35ea8ebaed06a1f5973e89e19dfb86704
+#6 resolve docker.io/library/python:3.12-slim@sha256:a0f57064cbdcd6285fa45f51237ab0b35ea8ebaed06a1f5973e89e19dfb86704 0.0s done
+#6 DONE 0.0s
+
+#7 [itens-service internal] load build context
+#7 transferring context: 193B done
+#7 DONE 0.0s
+
+#8 [auth-service internal] load build context
+#8 transferring context: 191B done
+#8 DONE 0.0s
+
+#9 [auth-service 2/6] WORKDIR /app
+#9 CACHED
+
+#10 [auth-service 3/6] COPY requirements-*.txt ./
+#10 CACHED
+
+#11 [auth-service 4/6] RUN pip install --no-cache-dir -r requirements-prd.txt
+#11 6.509 Collecting flask==3.1.3 (from -r requirements-prd.txt (line 1))
+#11 6.832   Downloading flask-3.1.3-py3-none-any.whl.metadata (3.2 kB)
+#11 7.110 Collecting gunicorn==23.0.0 (from -r requirements-prd.txt (line 2))
+#11 7.124   Downloading gunicorn-23.0.0-py3-none-any.whl.metadata (4.4 kB)
+#11 7.191 Collecting requests==2.33.0 (from -r requirements-prd.txt (line 3))
+#11 7.208   Downloading requests-2.33.0-py3-none-any.whl.metadata (5.1 kB)
+#11 7.234 Collecting blinker>=1.9.0 (from flask==3.1.3->-r requirements-prd.txt (line 1))
+#11 7.246   Downloading blinker-1.9.0-py3-none-any.whl.metadata (1.6 kB)
+#11 7.281 Collecting click>=8.1.3 (from flask==3.1.3->-r requirements-prd.txt (line 1))
+#11 7.293   Downloading click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+#11 7.318 Collecting itsdangerous>=2.2.0 (from flask==3.1.3->-r requirements-prd.txt (line 1))
+#11 7.332   Downloading itsdangerous-2.2.0-py3-none-any.whl.metadata (1.9 kB)
+#11 7.362 Collecting jinja2>=3.1.2 (from flask==3.1.3->-r requirements-prd.txt (line 1))
+#11 7.380   Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+#11 7.482 Collecting markupsafe>=2.1.1 (from flask==3.1.3->-r requirements-prd.txt (line 1))
+#11 7.495   Downloading markupsafe-3.0.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+#11 7.534 Collecting werkzeug>=3.1.0 (from flask==3.1.3->-r requirements-prd.txt (line 1))
+#11 7.547   Downloading werkzeug-3.1.9-py3-none-any.whl.metadata (4.1 kB)
+#11 7.584 Collecting packaging (from gunicorn==23.0.0->-r requirements-prd.txt (line 2))
+#11 7.600   Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+#11 7.829 Collecting charset_normalizer<4,>=2 (from requests==2.33.0->-r requirements-prd.txt (line 3))
+#11 7.843   Downloading charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (46 kB)
+#11 7.920 Collecting idna<4,>=2.5 (from requests==2.33.0->-r requirements-prd.txt (line 3))
+#11 7.935   Downloading idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+#11 7.976 Collecting urllib3<3,>=1.26 (from requests==2.33.0->-r requirements-prd.txt (line 3))
+#11 7.989   Downloading urllib3-2.8.0-py3-none-any.whl.metadata (7.4 kB)
+#11 8.026 Collecting certifi>=2023.5.7 (from requests==2.33.0->-r requirements-prd.txt (line 3))
+#11 8.039   Downloading certifi-2026.10.23-py3-none-any.whl.metadata (2.5 kB)
+#11 8.063 Downloading flask-3.1.3-py3-none-any.whl (103 kB)
+#11 8.142 Downloading gunicorn-23.0.0-py3-none-any.whl (85 kB)
+#11 8.209 Downloading requests-2.33.0-py3-none-any.whl (65 kB)
+#11 8.259 Downloading blinker-1.9.0-py3-none-any.whl (8.5 kB)
+#11 8.275 Downloading certifi-2026.10.23-py3-none-any.whl (135 kB)
+#11 8.358 Downloading charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (257 kB)
+#11 8.481 Downloading click-8.5.0-py3-none-any.whl (125 kB)
+#11 8.539 Downloading idna-3.20-py3-none-any.whl (69 kB)
+#11 8.575 Downloading itsdangerous-2.2.0-py3-none-any.whl (16 kB)
+#11 8.595 Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+#11 8.658 Downloading markupsafe-3.0.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+#11 8.679 Downloading urllib3-2.8.0-py3-none-any.whl (135 kB)
+#11 8.745 Downloading werkzeug-3.1.9-py3-none-any.whl (228 kB)
+#11 8.832 Downloading packaging-26.3-py3-none-any.whl (129 kB)
+#11 8.900 Installing collected packages: urllib3, packaging, markupsafe, itsdangerous, idna, click, charset_normalizer, certifi, blinker, werkzeug, requests, jinja2, gunicorn, flask
+#11 9.525 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#11 9.525 Successfully installed blinker-1.9.0 certifi-2026.10.23 charset_normalizer-3.5.2 click-8.5.0 flask-3.1.3 gunicorn-23.0.0 idna-3.20 itsdangerous-2.2.0 jinja2-3.1.6 markupsafe-3.0.4 packaging-26.3 requests-2.33.0 urllib3-2.8.0 werkzeug-3.1.9
+#11 9.895 
+#11 9.895 [notice] A new release of pip is available: 25.0.1 -> 26.2.2
+#11 9.895 [notice] To update, run: pip install --upgrade pip
+#11 DONE 10.0s
+
+#12 [auth-service 3/6] COPY requirements-*.txt ./
+#12 CACHED
+
+#13 [auth-service 4/6] RUN pip install --no-cache-dir -r requirements-prd.txt
+#13 CACHED
+
+#14 [auth-service 5/6] COPY auth-service/app.py .
+#14 DONE 0.1s
+
+#15 [itens-service 5/6] COPY itens-service/app.py .
+#15 DONE 0.1s
+
+#16 [itens-service 6/6] RUN useradd -m appuser && mkdir /data && chown appuser /data
+#16 DONE 0.3s
+
+#17 [auth-service 6/6] RUN useradd -m appuser
+#17 DONE 0.3s
+
+#18 [auth-service] exporting to image
+#18 exporting layers
+#18 exporting layers 0.6s done
+#18 exporting manifest sha256:5a521cd1dd14ca41c682cf78914e6e18eafa686c563d178dfc40424ae09c472a 0.0s done
+#18 exporting config sha256:caab7a67f524692e97388e2c13ecd22d580779d0421778807b1cc34592d86407 0.0s done
+#18 exporting attestation manifest sha256:5ffead2ceb34fb1adc2a7142568de14e0db5cd7865b2cd6febf82639f8dbc299
+#18 exporting attestation manifest sha256:5ffead2ceb34fb1adc2a7142568de14e0db5cd7865b2cd6febf82639f8dbc299 0.0s done
+#18 exporting manifest list sha256:897f3d4b9aaedd3cc6739ffa16cd0d17fb20774fe2008e68b6d93b052444dfa7 0.0s done
+#18 naming to ghcr.io/gil2004/inventario-auth:latest done
+#18 unpacking to ghcr.io/gil2004/inventario-auth:latest
+#18 unpacking to ghcr.io/gil2004/inventario-auth:latest 0.2s done
+#18 DONE 1.0s
+
+#19 [itens-service] exporting to image
+#19 exporting layers 0.7s done
+#19 exporting manifest sha256:ca7bd54aca09ed8935c63ede3b06795d6ca4bea367a364571ac17d1c8044a788 0.0s done
+#19 exporting config sha256:b3e774031f292a1c0053f715e101034563d3883bdef948cb2963cba0f1e271da 0.0s done
+#19 exporting attestation manifest sha256:df0057a7a44f80db01bdc3289b1b18ed78590eded882f88f22d73902fc4240cb 0.0s done
+#19 exporting manifest list sha256:1f2a6b9ae0d3f4d1b3b80718a3d5556775c9e9d7e6f169c8f3f66223b74510f7 0.0s done
+#19 naming to ghcr.io/gil2004/inventario-itens:latest done
+#19 unpacking to ghcr.io/gil2004/inventario-itens:latest 0.2s done
+#19 DONE 1.1s
+
+#20 [itens-service] resolving provenance for metadata file
+#20 DONE 0.0s
+
+#21 [auth-service] resolving provenance for metadata file
+#21 DONE 0.0s
+ Image ghcr.io/gil2004/inventario-auth:latest Built 
+ Image ghcr.io/gil2004/inventario-itens:latest Built 
+[?2004h]0;gil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx: ~/Secretária/ProjetoFinal/ProjetoFinal[01;32mgil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx[00m:[01;34m~/Secretária/ProjetoFinal/ProjetoFinal[00m$ make start_stg
+[?2004ldocker compose up -d
+ Image nginx:alpine Pulling 
+ 7b229517ed22 Pulling fs layer 0B
+ b9b388a21ecf Pulling fs layer 0B
+ 7cc330898115 Pulling fs layer 0B
+ 26185d08a3ec Pulling fs layer 0B
+ 2ec5fb117ffa Pulling fs layer 0B
+ 657023555a2a Pulling fs layer 0B
+ 9b0f7dfe35b2 Pulling fs layer 0B
+ 12b85cff06fd Pulling fs layer 0B
+ a4d5b1f57abc Download complete 0B
+ acc2d54c3743 Download complete 0B
+ 7b229517ed22 Downloading 1.049MB
+ 7b229517ed22 Downloading 1.049MB
+ 7b229517ed22 Downloading 2.097MB
+ 7b229517ed22 Downloading 2.097MB
+ 7b229517ed22 Downloading 3.146MB
+ 7b229517ed22 Download complete 0B
+ 7cc330898115 Download complete 0B
+ 7b229517ed22 Extracting 1B
+ 26185d08a3ec Download complete 0B
+ 657023555a2a Download complete 0B
+ 7b229517ed22 Pull complete 0B
+ 2ec5fb117ffa Downloading 1.21kB
+ b9b388a21ecf Downloading 1.049MB
+ 9b0f7dfe35b2 Download complete 0B
+ 2ec5fb117ffa Download complete 0B
+ b9b388a21ecf Downloading 1.049MB
+ b9b388a21ecf Downloading 1.049MB
+ 12b85cff06fd Downloading 1.049MB
+ b9b388a21ecf Downloading 1.049MB
+ 12b85cff06fd Download complete 0B
+ b9b388a21ecf Downloading 2.097MB
+ 12b85cff06fd Extracting 1B
+ b9b388a21ecf Downloading 2.097MB
+ 7cc330898115 Pull complete 0B
+ 26185d08a3ec Pull complete 0B
+ 657023555a2a Pull complete 0B
+ 9b0f7dfe35b2 Extracting 1B
+ 2ec5fb117ffa Pull complete 0B
+ 12b85cff06fd Pull complete 0B
+ b9b388a21ecf Downloading 2.097MB
+ 9b0f7dfe35b2 Pull complete 0B
+ b9b388a21ecf Downloading 3.146MB
+ b9b388a21ecf Downloading 3.146MB
+ b9b388a21ecf Downloading 4.194MB
+ b9b388a21ecf Downloading 5.243MB
+ b9b388a21ecf Downloading 5.243MB
+ b9b388a21ecf Downloading 6.291MB
+ b9b388a21ecf Downloading 7.34MB
+ b9b388a21ecf Downloading 7.34MB
+ b9b388a21ecf Downloading 8.389MB
+ b9b388a21ecf Downloading 9.437MB
+ b9b388a21ecf Downloading 10.49MB
+ b9b388a21ecf Downloading 10.49MB
+ b9b388a21ecf Downloading 11.53MB
+ b9b388a21ecf Downloading 12.58MB
+ b9b388a21ecf Downloading 12.58MB
+ b9b388a21ecf Downloading 13.63MB
+ b9b388a21ecf Downloading 14.68MB
+ b9b388a21ecf Downloading 15.73MB
+ b9b388a21ecf Downloading 15.73MB
+ b9b388a21ecf Downloading 16.78MB
+ b9b388a21ecf Downloading 17.83MB
+ b9b388a21ecf Downloading 17.83MB
+ b9b388a21ecf Downloading 18.87MB
+ b9b388a21ecf Downloading 19.92MB
+ b9b388a21ecf Download complete 0B
+ b9b388a21ecf Extracting 1B
+ b9b388a21ecf Extracting 1B
+ b9b388a21ecf Extracting 1B
+ b9b388a21ecf Pull complete 0B
+ Image nginx:alpine Pulled 
+ Network inventario-devops_inventario-net Creating 
+ Volume inventario-devops_itens-data Creating 
+ Volume inventario-devops_itens-data Creating 
+ Network inventario-devops_inventario-net Creating 
+ Volume inventario-devops_itens-data Created 
+ Volume inventario-devops_itens-data Created 
+ Network inventario-devops_inventario-net Created 
+ Network inventario-devops_inventario-net Created 
+ Container inventario-devops-auth-service-1 Creating 
+ Container inventario-devops-auth-service-2 Creating 
+ Container inventario-devops-auth-service-2 Created 
+ Container inventario-devops-itens-service-2 Creating 
+ Container inventario-devops-itens-service-1 Creating 
+ Container inventario-devops-auth-service-1 Created 
+ Container inventario-devops-itens-service-1 Created 
+ Container inventario-devops-itens-service-2 Created 
+ Container inventario-devops-nginx-1 Creating 
+ Container inventario-devops-nginx-1 Created 
+ Container inventario-devops-auth-service-2 Starting 
+ Container inventario-devops-auth-service-2 Started 
+ Container inventario-devops-auth-service-1 Starting 
+ Container inventario-devops-auth-service-1 Started 
+ Container inventario-devops-itens-service-1 Starting 
+ Container inventario-devops-itens-service-1 Started 
+ Container inventario-devops-itens-service-2 Starting 
+ Container inventario-devops-itens-service-2 Started 
+ Container inventario-devops-nginx-1 Starting 
+ Container inventario-devops-nginx-1 Started 
+sleep 10
+"/home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal/venv/bin/python" -m pytest -v tests/integracao | tee reports/stg-integracao.txt
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.2, pluggy-1.7.0 -- /home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal/venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal
+plugins: requests-mock-1.12.1, cov-7.0.0, platformdirs-4.13.5
+collecting ... collected 5 items
+
+tests/integracao/test_integracao.py::test_servicos_ativos PASSED         [ 20%]
+tests/integracao/test_integracao.py::test_crud_completo PASSED           [ 40%]
+tests/integracao/test_integracao.py::test_credenciais_erradas_rejeitadas PASSED [ 60%]
+tests/integracao/test_integracao.py::test_auth_service_nao_exposto PASSED [ 80%]
+tests/integracao/test_integracao.py::test_porta_80_fechada PASSED        [100%]
+
+============================== 5 passed in 0.10s ===============================
+
+NAME                                IMAGE                                     COMMAND                  SERVICE         CREATED          STATUS          PORTS
+inventario-devops-auth-service-1    ghcr.io/gil2004/inventario-auth:latest    "gunicorn -b 0.0.0.0…"   auth-service    11 seconds ago   Up 10 seconds   5001/tcp
+inventario-devops-auth-service-2    ghcr.io/gil2004/inventario-auth:latest    "gunicorn -b 0.0.0.0…"   auth-service    11 seconds ago   Up 11 seconds   5001/tcp
+inventario-devops-itens-service-1   ghcr.io/gil2004/inventario-itens:latest   "gunicorn -b 0.0.0.0…"   itens-service   11 seconds ago   Up 10 seconds   5002/tcp
+inventario-devops-itens-service-2   ghcr.io/gil2004/inventario-itens:latest   "gunicorn -b 0.0.0.0…"   itens-service   11 seconds ago   Up 10 seconds   5002/tcp
+inventario-devops-nginx-1           nginx:alpine                              "/docker-entrypoint.…"   nginx           11 seconds ago   Up 10 seconds   80/tcp, 0.0.0.0:443->443/tcp, [::]:443->443/tcp
+abrir API: https://localhost/api/itens
+[?2004h]0;gil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx: ~/Secretária/ProjetoFinal/ProjetoFinal[01;32mgil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx[00m:[01;34m~/Secretária/ProjetoFinal/ProjetoFinal[00m$ make stop_stg 
+[?2004ldocker compose down
+ Container inventario-devops-nginx-1 Stopping 
+ Container inventario-devops-nginx-1 Stopped 
+ Container inventario-devops-nginx-1 Removing 
+ Container inventario-devops-nginx-1 Removed 
+ Container inventario-devops-itens-service-2 Stopping 
+ Container inventario-devops-itens-service-1 Stopping 
+ Container inventario-devops-itens-service-1 Stopped 
+ Container inventario-devops-itens-service-1 Removing 
+ Container inventario-devops-itens-service-1 Removed 
+ Container inventario-devops-itens-service-2 Stopped 
+ Container inventario-devops-itens-service-2 Removing 
+ Container inventario-devops-itens-service-2 Removed 
+ Container inventario-devops-auth-service-1 Stopping 
+ Container inventario-devops-auth-service-2 Stopping 
+ Container inventario-devops-auth-service-2 Stopped 
+ Container inventario-devops-auth-service-2 Removing 
+ Container inventario-devops-auth-service-2 Removed 
+ Container inventario-devops-auth-service-1 Stopped 
+ Container inventario-devops-auth-service-1 Removing 
+ Container inventario-devops-auth-service-1 Removed 
+ Network inventario-devops_inventario-net Removing 
+ Network inventario-devops_inventario-net Removed 
+[?2004h]0;gil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx: ~/Secretária/ProjetoFinal/ProjetoFinal[01;32mgil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx[00m:[01;34m~/Secretária/ProjetoFinal/ProjetoFinal[00m$ make build_prd
+[?2004lmicrok8s start
+[sudo] password for gil-alves: 
+Sorry, try again.
+[sudo] password for gil-alves: 
+microk8s status --wait-ready
+microk8s is running
+high-availability: no
+  datastore master nodes: 127.0.0.1:19001
+  datastore standby nodes: none
+addons:
+  enabled:
+    dns                  # (core) CoreDNS
+    ha-cluster           # (core) Configure high availability on the current node
+    helm                 # (core) Helm - the package manager for Kubernetes
+    helm3                # (core) Helm 3 - the package manager for Kubernetes
+    hostpath-storage     # (core) Storage class; allocates storage from host directory
+    storage              # (core) Alias to hostpath-storage add-on, deprecated
+  disabled:
+    cert-manager         # (core) Cloud native certificate management
+    cis-hardening        # (core) Apply CIS K8s hardening
+    community            # (core) The community addons repository
+    dashboard            # (core) The Kubernetes dashboard
+    gpu                  # (core) Alias to nvidia add-on
+    host-access          # (core) Allow Pods connecting to Host services smoothly
+    ingress              # (core) Ingress controller for external access
+    kube-ovn             # (core) An advanced network fabric for Kubernetes
+    mayastor             # (core) OpenEBS MayaStor
+    metallb              # (core) Loadbalancer for your Kubernetes cluster
+    metrics-server       # (core) K8s Metrics Server for API access to service metrics
+    minio                # (core) MinIO object storage
+    nvidia               # (core) NVIDIA hardware (GPU and network) support
+    observability        # (core) A lightweight observability stack for logs, traces and metrics
+    prometheus           # (core) Prometheus operator for monitoring and logging
+    rbac                 # (core) Role-Based Access Control for authorisation
+    registry             # (core) Private image registry exposed on localhost:32000
+    rook-ceph            # (core) Distributed Ceph storage using Rook
+microk8s enable dns
+Infer repository core for addon dns
+Addon core/dns is already enabled
+microk8s enable hostpath-storage
+Infer repository core for addon hostpath-storage
+Addon core/hostpath-storage is already enabled
+microk8s kubectl wait --for=condition=available deployment --all -n kube-system --timeout=180s
+deployment.apps/calico-kube-controllers condition met
+deployment.apps/coredns condition met
+deployment.apps/hostpath-provisioner condition met
+for img in ghcr.io/gil2004/inventario-auth ghcr.io/gil2004/inventario-itens; do microk8s ctr image pull $img:latest > /dev/null || exit 1; echo "pull OK: $img:latest"; done
+pull OK: ghcr.io/gil2004/inventario-auth:latest
+pull OK: ghcr.io/gil2004/inventario-itens:latest
+[?2004h]0;gil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx: ~/Secretária/ProjetoFinal/ProjetoFinal[01;32mgil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx[00m:[01;34m~/Secretária/ProjetoFinal/ProjetoFinal[00m$ make statrt[K[Kr[K[Krt_prd
+[?2004lmicrok8s start
+microk8s status --wait-ready
+microk8s is running
+high-availability: no
+  datastore master nodes: 127.0.0.1:19001
+  datastore standby nodes: none
+addons:
+  enabled:
+    dns                  # (core) CoreDNS
+    ha-cluster           # (core) Configure high availability on the current node
+    helm                 # (core) Helm - the package manager for Kubernetes
+    helm3                # (core) Helm 3 - the package manager for Kubernetes
+    hostpath-storage     # (core) Storage class; allocates storage from host directory
+    storage              # (core) Alias to hostpath-storage add-on, deprecated
+  disabled:
+    cert-manager         # (core) Cloud native certificate management
+    cis-hardening        # (core) Apply CIS K8s hardening
+    community            # (core) The community addons repository
+    dashboard            # (core) The Kubernetes dashboard
+    gpu                  # (core) Alias to nvidia add-on
+    host-access          # (core) Allow Pods connecting to Host services smoothly
+    ingress              # (core) Ingress controller for external access
+    kube-ovn             # (core) An advanced network fabric for Kubernetes
+    mayastor             # (core) OpenEBS MayaStor
+    metallb              # (core) Loadbalancer for your Kubernetes cluster
+    metrics-server       # (core) K8s Metrics Server for API access to service metrics
+    minio                # (core) MinIO object storage
+    nvidia               # (core) NVIDIA hardware (GPU and network) support
+    observability        # (core) A lightweight observability stack for logs, traces and metrics
+    prometheus           # (core) Prometheus operator for monitoring and logging
+    rbac                 # (core) Role-Based Access Control for authorisation
+    registry             # (core) Private image registry exposed on localhost:32000
+    rook-ceph            # (core) Distributed Ceph storage using Rook
+microk8s enable dns
+Infer repository core for addon dns
+Addon core/dns is already enabled
+microk8s enable hostpath-storage
+Infer repository core for addon hostpath-storage
+Addon core/hostpath-storage is already enabled
+microk8s kubectl wait --for=condition=available deployment --all -n kube-system --timeout=180s
+deployment.apps/calico-kube-controllers condition met
+deployment.apps/coredns condition met
+deployment.apps/hostpath-provisioner condition met
+microk8s kubectl create configmap nginx-conf --from-file=default.conf=nginx/nginx.conf --dry-run=client -o yaml | microk8s kubectl apply -f -
+configmap/nginx-conf configured
+microk8s kubectl create secret tls nginx-tls --cert=nginx/certs/nginx.crt --key=nginx/certs/nginx.key --dry-run=client -o yaml | microk8s kubectl apply -f -
+secret/nginx-tls configured
+sed "s/:latest/:latest/" k8s/prd.yml | microk8s kubectl apply -f -
+deployment.apps/auth-service created
+service/auth-service created
+persistentvolumeclaim/itens-data unchanged
+deployment.apps/itens-service unchanged
+service/itens-service unchanged
+deployment.apps/nginx unchanged
+service/nginx unchanged
+microk8s kubectl rollout restart deployment nginx
+deployment.apps/nginx restarted
+microk8s kubectl wait --for=condition=available deployment --all --timeout=300s || (microk8s kubectl get pods; microk8s kubectl describe pods | grep -A5 "Events:"; exit 1)
+deployment.apps/auth-service condition met
+deployment.apps/itens-service condition met
+deployment.apps/nginx condition met
+BASE_URL=https://localhost:30443 "/home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal/venv/bin/python" -m pytest -v tests/smoke | tee reports/prd-smoke.txt
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.2, pluggy-1.7.0 -- /home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal/venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal
+plugins: requests-mock-1.12.1, cov-7.0.0, platformdirs-4.13.5
+collecting ... collected 3 items
+
+tests/smoke/test_smoke.py::test_health PASSED                            [ 33%]
+tests/smoke/test_smoke.py::test_listar_itens PASSED                      [ 66%]
+tests/smoke/test_smoke.py::test_criar_e_apagar_item PASSED               [100%]
+
+============================== 3 passed in 0.07s ===============================
+
+NAME                            READY   STATUS    RESTARTS   AGE
+auth-service-56d89bcf4f-p9x5n   1/1     Running   0          5s
+auth-service-56d89bcf4f-qtb9j   1/1     Running   0          5s
+itens-service-b5d5db57-hdgsl    1/1     Running   3          12m
+itens-service-b5d5db57-xfpdm    1/1     Running   3          11m
+nginx-9d546f5c8-b2zcl           1/1     Running   0          3s
+nginx-9d546f5c8-x8dxp           1/1     Running   0          5s
+abrir API: https://localhost:30443/api/itens
+[?2004h]0;gil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx: ~/Secretária/ProjetoFinal/ProjetoFinal[01;32mgil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx[00m:[01;34m~/Secretária/ProjetoFinal/ProjetoFinal[00m$ make prd_demo
+[?2004l--- Criar item (com login)
+{"id":4,"nome":"Portatil","preco":899.9,"quantidade":3}
+
+--- Listar itens (sem login)
+[{"id":4,"nome":"Portatil","preco":899.9,"quantidade":3}]
+
+--- Alterar a quantidade do item 4
+{"id":4,"nome":"Portatil","preco":899.9,"quantidade":5}
+
+--- Apagar o item 4
+HTTP 204
+--- Tentativa com password errada
+{"erro":"Credenciais inválidas"}
+
+HTTP 401
+[?2004h]0;gil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx: ~/Secretária/ProjetoFinal/ProjetoFinal[01;32mgil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx[00m:[01;34m~/Secretária/ProjetoFinal/ProjetoFinal[00m$ make prd_:[Kha
+[?2004l--- Pods do itens-service antes
+microk8s kubectl get pods -l app=itens-service
+NAME                           READY   STATUS    RESTARTS   AGE
+itens-service-b5d5db57-hdgsl   1/1     Running   3          12m
+itens-service-b5d5db57-xfpdm   1/1     Running   3          11m
+microk8s kubectl delete $(microk8s kubectl get pods -l app=itens-service -o name | head -1) --wait=false
+pod "itens-service-b5d5db57-hdgsl" deleted
+--- A API continua a responder (a outra réplica atende)
+[]
+
+microk8s kubectl rollout status deployment itens-service
+Waiting for deployment "itens-service" rollout to finish: 1 of 2 updated replicas are available...
+deployment "itens-service" successfully rolled out
+--- O Kubernetes já criou um pod novo
+microk8s kubectl get pods -l app=itens-service
+NAME                           READY   STATUS    RESTARTS   AGE
+itens-service-b5d5db57-gktbr   1/1     Running   0          8s
+itens-service-b5d5db57-xfpdm   1/1     Running   3          11m
+[?2004h]0;gil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx: ~/Secretária/ProjetoFinal/ProjetoFinal[01;32mgil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx[00m:[01;34m~/Secretária/ProjetoFinal/ProjetoFinal[00m$ make prd[K[K[Kprd_scale 
+[?2004lmicrok8s kubectl scale deployment itens-service --replicas=4
+deployment.apps/itens-service scaled
+microk8s kubectl rollout status deployment itens-service
+Waiting for deployment "itens-service" rollout to finish: 2 of 4 updated replicas are available...
+Waiting for deployment "itens-service" rollout to finish: 3 of 4 updated replicas are available...
+deployment "itens-service" successfully rolled out
+microk8s kubectl get pods -l app=itens-service
+NAME                           READY   STATUS    RESTARTS   AGE
+itens-service-b5d5db57-gktbr   1/1     Running   0          26s
+itens-service-b5d5db57-kx59q   1/1     Running   0          8s
+itens-service-b5d5db57-lxd2j   1/1     Running   0          8s
+itens-service-b5d5db57-xfpdm   1/1     Running   3          11m
+microk8s kubectl scale deployment itens-service --replicas=2
+deployment.apps/itens-service scaled
+sleep 5
+microk8s kubectl get pods -l app=itens-service
+NAME                           READY   STATUS    RESTARTS   AGE
+itens-service-b5d5db57-gktbr   1/1     Running   0          32s
+itens-service-b5d5db57-xfpdm   1/1     Running   3          11m
+[?2004h]0;gil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx: ~/Secretária/ProjetoFinal/ProjetoFinal[01;32mgil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx[00m:[01;34m~/Secretária/ProjetoFinal/ProjetoFinal[00m$ make stop_prd
+[?2004lmicrok8s kubectl delete -f k8s/prd.yml --ignore-not-found
+deployment.apps "auth-service" deleted
+service "auth-service" deleted
+persistentvolumeclaim "itens-data" deleted
+deployment.apps "itens-service" deleted
+service "itens-service" deleted
+deployment.apps "nginx" deleted
+service "nginx" deleted
+microk8s kubectl delete configmap nginx-conf --ignore-not-found
+configmap "nginx-conf" deleted
+microk8s kubectl delete secret nginx-tls --ignore-not-found
+secret "nginx-tls" deleted
+[?2004h]0;gil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx: ~/Secretária/ProjetoFinal/ProjetoFinal[01;32mgil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx[00m:[01;34m~/Secretária/ProjetoFinal/ProjetoFinal[00m$ make start_dev
+[?2004ldocker compose -f docker-compose.dev.yml up -d
+ Network inventario-dev_default Creating 
+ Network inventario-dev_default Creating 
+ Network inventario-dev_default Created 
+ Network inventario-dev_default Created 
+ Container inventario-dev-auth-service-1 Creating 
+ Container inventario-dev-jaeger-1 Creating 
+ Container inventario-dev-auth-service-1 Created 
+ Container inventario-dev-jaeger-1 Created 
+ Container inventario-dev-itens-service-1 Creating 
+ Container inventario-dev-itens-service-1 Created 
+ Container inventario-dev-auth-service-1 Starting 
+ Container inventario-dev-jaeger-1 Starting 
+ Container inventario-dev-auth-service-1 Started 
+ Container inventario-dev-jaeger-1 Started 
+ Container inventario-dev-itens-service-1 Starting 
+ Container inventario-dev-itens-service-1 Started 
+sleep 10
+"/home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal/venv/bin/python" -m pytest -v tests/dev | tee reports/dev-tracing.txt
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.2, pluggy-1.7.0 -- /home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal/venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal
+plugins: requests-mock-1.12.1, cov-7.0.0, platformdirs-4.13.5
+collecting ... collected 1 item
+
+tests/dev/test_tracing.py::test_trace_chega_ao_jaeger PASSED             [100%]
+
+============================== 1 passed in 6.05s ===============================
+
+NAME                             IMAGE                         COMMAND                  SERVICE         CREATED          STATUS          PORTS
+inventario-dev-auth-service-1    inventario-auth:dev           "gunicorn -b 0.0.0.0…"   auth-service    17 seconds ago   Up 16 seconds   0.0.0.0:5001->5001/tcp, [::]:5001->5001/tcp
+inventario-dev-itens-service-1   inventario-itens:dev          "gunicorn -b 0.0.0.0…"   itens-service   17 seconds ago   Up 16 seconds   0.0.0.0:5002->5002/tcp, [::]:5002->5002/tcp
+inventario-dev-jaeger-1          jaegertracing/jaeger:latest   "/cmd/jaeger/jaeger-…"   jaeger          17 seconds ago   Up 16 seconds   4317-4318/tcp, 5778-5779/tcp, 9411/tcp, 13132-13133/tcp, 14250/tcp, 14268/tcp, 0.0.0.0:16686->16686/tcp, [::]:16686->16686/tcp
+abrir API: http://localhost:5002/api/itens
+abrir Jaeger: http://localhost:16686
+[?2004h]0;gil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx: ~/Secretária/ProjetoFinal/ProjetoFinal[01;32mgil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx[00m:[01;34m~/Secretária/ProjetoFinal/ProjetoFinal[00m$ make k[Kjaeger_erro
+[?2004ldocker compose -f docker-compose.dev.yml stop auth-service
+ Container inventario-dev-auth-service-1 Stopping 
+ Container inventario-dev-auth-service-1 Stopped 
+--- Criar item com o auth-service em baixo (esperado: 503)
+{"erro":"auth-service indisponível"}
+
+HTTP 503
+docker compose -f docker-compose.dev.yml start auth-service
+ Container inventario-dev-auth-service-1 Starting 
+ Container inventario-dev-auth-service-1 Started 
+--- Abrir http://localhost:16686, service itens-service: o trace com 503 mostra a causa raiz
+[?2004h]0;gil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx: ~/Secretária/ProjetoFinal/ProjetoFinal[01;32mgil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx[00m:[01;34m~/Secretária/ProjetoFinal/ProjetoFinal[00m$ make cçean[K[K[K[Klean
+[?2004ldocker compose -f docker-compose.dev.yml down --rmi all --volumes --remove-orphans
+ Container inventario-dev-itens-service-1 Stopping 
+ Container inventario-dev-itens-service-1 Stopped 
+ Container inventario-dev-itens-service-1 Removing 
+ Container inventario-dev-itens-service-1 Removed 
+ Container inventario-dev-jaeger-1 Stopping 
+ Container inventario-dev-auth-service-1 Stopping 
+ Container inventario-dev-jaeger-1 Stopped 
+ Container inventario-dev-jaeger-1 Removing 
+ Container inventario-dev-jaeger-1 Removed 
+ Container inventario-dev-auth-service-1 Stopped 
+ Container inventario-dev-auth-service-1 Removing 
+ Container inventario-dev-auth-service-1 Removed 
+ Image inventario-auth:dev Removing 
+ Image jaegertracing/jaeger:latest Removing 
+ Image inventario-itens:dev Removing 
+ Dangling images Removing 
+ Network inventario-dev_default Removing 
+ Volume inventario-dev_itens-data-dev Removing 
+ Volume inventario-dev_itens-data-dev Removed 
+ Dangling images Removed 
+ Network inventario-dev_default Removed 
+ Image inventario-auth:dev Removed 
+ Image jaegertracing/jaeger:latest Removed 
+ Image inventario-itens:dev Removed 
+rm -rf venv .pytest_cache .ruff_cache .coverage
+find . -name "__pycache__" -type d -prune -exec rm -rf {} +
+find . -name ".pytest_cache" -type d -prune -exec rm -rf {} +
+find . -name ".coverage" -delete
+find . -name "*.db" -delete
+docker compose down --rmi all --volumes --remove-orphans
+ Image ghcr.io/gil2004/inventario-itens:latest Removing 
+ Image ghcr.io/gil2004/inventario-auth:latest Removing 
+ Image nginx:alpine Removing 
+ Dangling images Removing 
+ Volume inventario-devops_itens-data Removing 
+ Volume inventario-devops_itens-data Removed 
+ Dangling images Removed 
+ Image ghcr.io/gil2004/inventario-itens:latest Removed 
+ Image ghcr.io/gil2004/inventario-auth:latest Removed 
+ Image nginx:alpine Removed 
+microk8s kubectl delete -f k8s/prd.yml --ignore-not-found
+microk8s kubectl delete configmap nginx-conf --ignore-not-found
+microk8s kubectl delete secret nginx-tls --ignore-not-found
+The connection to the server 127.0.0.1:16443 was refused - did you specify the right host or port?
+make: [Makefile:164: stop_prd] Erro 1 (ignorado)
+for img in ghcr.io/gil2004/inventario-auth ghcr.io/gil2004/inventario-itens; do microk8s ctr image rm $img:latest; done
+ghcr.io/gil2004/inventario-auth:latest
+ghcr.io/gil2004/inventario-itens:latest
+--- Só deve aparecer o service/kubernetes
+microk8s kubectl get all
+The connection to the server 127.0.0.1:16443 was refused - did you specify the right host or port?
+The connection to the server 127.0.0.1:16443 was refused - did you specify the right host or port?
+The connection to the server 127.0.0.1:16443 was refused - did you specify the right host or port?
+The connection to the server 127.0.0.1:16443 was refused - did you specify the right host or port?
+The connection to the server 127.0.0.1:16443 was refused - did you specify the right host or port?
+The connection to the server 127.0.0.1:16443 was refused - did you specify the right host or port?
+The connection to the server 127.0.0.1:16443 was refused - did you specify the right host or port?
+The connection to the server 127.0.0.1:16443 was refused - did you specify the right host or port?
+The connection to the server 127.0.0.1:16443 was refused - did you specify the right host or port?
+The connection to the server 127.0.0.1:16443 was refused - did you specify the right host or port?
+make: [Makefile:170: clean_prd] Erro 1 (ignorado)
+make k8s_stop
+make[1]: a entrar na pasta "/home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal"
+microk8s stop || (sleep 15 && microk8s stop)
+Run service command "stop" for services ["daemon-kubelite"] of snap "microk8s"                                                                                                      /Run service command "stop" for services ["daemon-kubelite"] of snap "microk8s"                                                                                                      -Run service command "stop" for services ["daemon-kubelite"] of snap "microk8s"                                                                                                      \Run service command "stop" for services ["daemon-kubelite"] of snap "microk8s"                                                                                                      |Run service command "stop" for services ["daemon-kubelite"] of snap "microk8s"                                                                                                      /[0m[?25h[KStopped.
+ctr: failed to dial "/var/snap/microk8s/common/run/containerd.sock": connection error: desc = "transport: error while dialing: dial unix /var/snap/microk8s/common/run/containerd.sock: connect: connection refused"
+ctr: failed to dial "/var/snap/microk8s/common/run/containerd.sock": connection error: desc = "transport: error while dialing: dial unix /var/snap/microk8s/common/run/containerd.sock: connect: connection refused"
+ctr: failed to dial "/var/snap/microk8s/common/run/containerd.sock": connection error: desc = "transport: error while dialing: dial unix /var/snap/microk8s/common/run/containerd.sock: connect: connection refused"
+Run service command "stop" for services ["daemon-apiserver-kicker" "daemon-apiserver-proxy" "daemon-cluster-agent" "daemon-containerd" "daemon-etcd" "daemon-flanneld" "daemon-k8s-d…Run service command "stop" for services ["daemon-apiserver-kicker" "daemon-apiserver-proxy" "daemon-cluster-agent" "daemon-containerd" "daemon-etcd" "daemon-flanneld" "daemon-k8s-d…Run service command "stop" for services ["daemon-apiserver-kicker" "daemon-apiserver-proxy" "daemon-cluster-agent" "daemon-containerd" "daemon-etcd" "daemon-flanneld" "daemon-k8s-d…Run service command "stop" for services ["daemon-apiserver-kicker" "daemon-apiserver-proxy" "daemon-cluster-agent" "daemon-containerd" "daemon-etcd" "daemon-flanneld" "daemon-k8s-d…Run service command "stop" for services ["daemon-apiserver-kicker" "daemon-apiserver-proxy" "daemon-cluster-agent" "daemon-containerd" "daemon-etcd" "daemon-flanneld" "daemon-k8s-d…Run service command "stop" for services ["daemon-apiserver-kicker" "daemon-apiserver-proxy" "daemon-cluster-agent" "daemon-containerd" "daemon-etcd" "daemon-flanneld" "daemon-k8s-d…[0m[?25h[KStopped.
+make[1]: a sair da pasta "/home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal"
+docker builder prune -af
+ID						RECLAIMABLE	SIZE		LAST ACCESSED
+7yp32a3gxitb0nee337w22vl5*              	true 		8.192kB   	4 minutes ago
+uej5ysn8lbvfz2h9ydgcn1i3q*              	true 	8.192kB   	4 minutes ago
+rdf89x4qknt5a2yxzdszlhpv8               	true 	81.16kB   	6 minutes ago
+f5x9m1nc3h6cvs0itihttpfay*              	true 	28.67kB   	4 minutes ago
+z6mjftrn8hk71i2regmwxesi6               	true 	77.03kB   	6 minutes ago
+9732a5r42rgs9h49kt9ykuq8m*              	true 	8.192kB   	4 minutes ago
+tmku8hwr4mg4f13wgfzxnou4s               	true 	81.16kB   	4 minutes ago
+j2kx0jq6c8qdfmm8suplcglo4               	true 	77.03kB   	4 minutes ago
+ky0ai0g4rxymksgei5yr6r951*              	true 	24.58kB   	4 minutes ago
+kip2yqjjew6guvo8hygsnvhlr               	true 	13.01kB   	6 minutes ago
+ihve4yomrdpvhlxpbbxijq60v               	true 	13.01kB   	4 minutes ago
+jhrsc9c8i0r2k51r114k3qyi8               	true 	18.31kB   	6 minutes ago
+cpuj9h1fuibhae8de2g0s4o2p               	true 	18.31kB   	4 minutes ago
+r3y3f25b1rudph16c39k9lztr               	true 	27.88MB   	4 minutes ago
+16246usl38psnbhcfd7vymhzw               	true 	140.9MB   	6 minutes ago
+11uhmm7hyxx3v4mqwzul0qtsn               	true 	20.85kB   	4 minutes ago
+xgeid9xgjjk0ifcfhshzwf47j               	true 	8.285kB   	6 minutes ago
+pni9vypm0ja21pw9rjdu18lwl               	true 	16.63kB   	6 minutes ago
+of726hwg5vo2798fwqsm061n5               	true 	53.51MB   	6 minutes ago
+smcch1avfamtwr42fyj6nyl30               	true 	6.219MB   	6 minutes ago
+z2bkizlonk8ajduu6ud5op2f3               	true 	117.5MB   	6 minutes ago
+Total:	346.5MB
+rm -rf nginx/certs
+--- Verificacao: nada do projeto deve aparecer
+sem containers do projeto
+sem imagens do projeto
+sem volumes do projeto
+sem redes do projeto
+--- Os pedidos seguintes TEM de falhar
+DEV parado: OK
+Jaeger parado: OK
+STG parado: OK
+PRD parado: OK
+[?2004h]0;gil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx: ~/Secretária/ProjetoFinal/ProjetoFinal[01;32mgil-alves@gil-alves-Victus-by-HP-Laptop-16-e0xxx[00m:[01;34m~/Secretária/ProjetoFinal/ProjetoFinal[00m$ edo[K[Kxit
+[?2004lexit
+
+Script terminado em 2026-10-26 18:07:34+00:00 [COMMAND_EXIT_CODE="0"]

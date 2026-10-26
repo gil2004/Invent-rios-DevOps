@@ -44,8 +44,8 @@ test_dev:
 	cd auth-service && $(PY) -m pytest -v --cov=app tests | tee ../$(REPORTS)/dev-unitarios-auth.txt
 	cd itens-service && $(PY) -m pytest -v --cov=app tests | tee ../$(REPORTS)/dev-unitarios-itens.txt
 	$(VENV)/bin/bandit -r auth-service itens-service -x auth-service/tests,itens-service/tests | tee $(REPORTS)/seguranca-bandit.txt
-	$(VENV)/bin/pip-audit -r requirements-prd.txt | tee $(REPORTS)/seguranca-pip-audit.txt
-
+	$(VENV)/bin/pip-audit -r requirements-prd.txt 2>&1 | tee $(REPORTS)/seguranca-pip-audit.txt
+	
 # DEV start: serviços + Jaeger, e teste de que os traces chegam ao Jaeger
 start_dev:
 	$(DEV) up -d
@@ -138,7 +138,7 @@ k8s_stop:
 
 # PRD build: não há build da app; prepara o cluster e faz pull das imagens validadas em STG
 build_prd: cert k8s_start
-	for img in $(IMAGENS); do microk8s ctr image pull $$img:$(TAG); done
+	for img in $(IMAGENS); do microk8s ctr image pull $$img:$(TAG) > /dev/null || exit 1; echo "pull OK: $$img:$(TAG)"; done
 
 # PRD start: configuração + certificado no cluster, deploy da tag $(TAG) e smoke tests
 start_prd: cert k8s_start

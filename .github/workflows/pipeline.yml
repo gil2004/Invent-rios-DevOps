@@ -34,7 +34,7 @@ jobs:
       - name: Segurança do código (bandit)
         run: bandit -r auth-service itens-service -x auth-service/tests,itens-service/tests | tee reports/seguranca-bandit.txt
       - name: Segurança das bibliotecas de PRD (pip-audit)
-        run: pip-audit -r requirements-prd.txt | tee reports/seguranca-pip-audit.txt
+        run: pip-audit -r requirements-prd.txt 2>&1 | tee reports/seguranca-pip-audit.txt
       - name: Subir o ambiente DEV com o Jaeger
         run: |
           docker compose -f docker-compose.dev.yml up -d --build
