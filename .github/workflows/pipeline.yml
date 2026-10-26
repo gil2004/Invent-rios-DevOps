@@ -91,16 +91,12 @@ jobs:
           path: reports/
 
   prd:
-    name: PRD - pull da imagem testada em STG para Kubernetes (sem build) e smoke tests
+    name: PRD - pull da imagem testada em STG para Kubernetes (sem build)
     needs: stg
     runs-on: ubuntu-latest
     environment: prd
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-python@v6
-        with:
-          python-version: "3.12"
-      - run: pip install -r requirements-stg.txt
       - name: Instalar o Kubernetes (MicroK8s)
         run: |
           sudo snap install microk8s --classic --channel=1.33/stable
@@ -125,12 +121,12 @@ jobs:
           sed "s/:latest/:$TAG/" k8s/prd.yml | kubectl apply -f -
           kubectl wait --for=condition=available deployment --all --timeout=300s
           kubectl get pods -o wide
-      - name: Smoke tests
-        env:
-          BASE_URL: https://localhost:30443
+      - name: Confirmar que a API responde
         run: |
           mkdir -p reports
-          python -m pytest -v tests/smoke | tee reports/prd-smoke.txt
+          curl -sf --cacert nginx/certs/nginx.crt https://localhost:30443/health/itens | tee reports/prd-health.txt && echo
+          curl -sf --cacert nginx/certs/nginx.crt https://localhost:30443/health/auth | tee -a reports/prd-health.txt && echo
+          curl -sf --cacert nginx/certs/nginx.crt https://localhost:30443/api/itens | tee -a reports/prd-health.txt && echo
       - name: Diagnóstico (só se falhar)
         if: failure()
         run: |

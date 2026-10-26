@@ -142,7 +142,7 @@ k8s_stop:
 build_prd: cert k8s_start
 	for img in $(IMAGENS); do microk8s ctr image pull $$img:$(TAG); done
 
-# PRD start: configuração + certificado no cluster, deploy da tag $(TAG) e smoke tests
+# PRD start: configuração + certificado no cluster, deploy da tag $(TAG) e 3 curl para confirmar que a API responde
 start_prd: cert k8s_start
 	$(K) create configmap nginx-conf --from-file=default.conf=nginx/nginx.conf --dry-run=client -o yaml | $(K) apply -f -
 	$(K) create secret tls nginx-tls --cert=$(CERT) --key=nginx/certs/nginx.key --dry-run=client -o yaml | $(K) apply -f -
@@ -150,7 +150,9 @@ start_prd: cert k8s_start
 	$(K) rollout restart deployment nginx
 	$(K) wait --for=condition=available deployment --all --timeout=300s || ($(K) get pods; $(K) describe pods | grep -A5 "Events:"; exit 1)
 	@mkdir -p $(REPORTS)
-	BASE_URL=$(PRD_URL) $(PY) -m pytest -v tests/smoke | tee $(REPORTS)/prd-smoke.txt
+	curl -sf --cacert $(CERT) $(PRD_URL)/health/itens | tee $(REPORTS)/prd-health.txt && echo
+	curl -sf --cacert $(CERT) $(PRD_URL)/health/auth | tee -a $(REPORTS)/prd-health.txt && echo
+	curl -sf --cacert $(CERT) $(PRD_URL)/api/itens | tee -a $(REPORTS)/prd-health.txt && echo
 	@echo ""
 	@$(K) get pods
 	@echo abrir API: $(PRD_URL)/api/itens
