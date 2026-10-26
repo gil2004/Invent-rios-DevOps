@@ -1,0 +1,22 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.2, pluggy-1.7.0 -- /home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal/venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal/auth-service
+plugins: requests-mock-1.12.1, cov-7.0.0, platformdirs-4.13.5
+collecting ... collected 5 items
+
+tests/test_app.py::test_health PASSED                                    [ 20%]
+tests/test_app.py::test_credenciais_corretas PASSED                      [ 40%]
+tests/test_app.py::test_credenciais_erradas[dados0] PASSED               [ 60%]
+tests/test_app.py::test_credenciais_erradas[dados1] PASSED               [ 80%]
+tests/test_app.py::test_credenciais_erradas[dados2] PASSED               [100%]
+
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.3-final-0 ________________
+
+Name     Stmts   Miss  Cover
+----------------------------
+app.py      33     10    70%
+----------------------------
+TOTAL       33     10    70%
+============================== 5 passed in 0.21s ===============================

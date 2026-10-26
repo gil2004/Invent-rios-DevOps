@@ -1,0 +1,12 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.2, pluggy-1.7.0 -- /home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal/venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/gil-alves/Secretária/ProjetoFinal/ProjetoFinal
+plugins: requests-mock-1.12.1, cov-7.0.0, platformdirs-4.13.5
+collecting ... collected 3 items
+
+tests/smoke/test_smoke.py::test_health PASSED                            [ 33%]
+tests/smoke/test_smoke.py::test_listar_itens PASSED                      [ 66%]
+tests/smoke/test_smoke.py::test_criar_e_apagar_item PASSED               [100%]
+
+============================== 3 passed in 0.07s ===============================

@@ -1,3 +1,4 @@
+# STG: build das imagens de PRD (requirements-prd.txt) e ambiente para os testes de integração
 name: inventario-devops
 
 services:
@@ -25,9 +26,6 @@ services:
     restart: unless-stopped
     networks:
       - inventario-net
-    environment:
-      OTEL_SERVICE_NAME: auth-service
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318
 
   itens-service:
     build:
@@ -37,8 +35,6 @@ services:
     environment:
       AUTH_URL: http://auth-service:5001
       DB_PATH: /data/itens.db
-      OTEL_SERVICE_NAME: itens-service
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318
     volumes:
       - itens-data:/data
     deploy:
@@ -46,14 +42,6 @@ services:
     restart: unless-stopped
     depends_on:
       - auth-service
-    networks:
-      - inventario-net
-
-  jaeger:
-    image: jaegertracing/jaeger:latest
-    ports:
-      - "16686:16686"
-    restart: unless-stopped  
     networks:
       - inventario-net
 
@@ -65,5 +53,3 @@ networks:
 
 volumes:
   itens-data:
-
-  

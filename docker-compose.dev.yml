@@ -1,0 +1,44 @@
+# DEV: imagens com requirements-dev.txt (OpenTelemetry) e Jaeger para os testes de desenvolvimento
+name: inventario-dev
+
+services:
+  auth-service:
+    build:
+      context: .
+      dockerfile: auth-service/Dockerfile
+      args:
+        REQUIREMENTS: requirements-dev.txt
+    image: inventario-auth:dev
+    ports:
+      - "5001:5001"
+    environment:
+      OTEL_SERVICE_NAME: auth-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318
+
+  itens-service:
+    build:
+      context: .
+      dockerfile: itens-service/Dockerfile
+      args:
+        REQUIREMENTS: requirements-dev.txt
+    image: inventario-itens:dev
+    ports:
+      - "5002:5002"
+    environment:
+      AUTH_URL: http://auth-service:5001
+      DB_PATH: /data/itens.db
+      OTEL_SERVICE_NAME: itens-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318
+    volumes:
+      - itens-data-dev:/data
+    depends_on:
+      - auth-service
+      - jaeger
+
+  jaeger:
+    image: jaegertracing/jaeger:latest
+    ports:
+      - "16686:16686"
+
+volumes:
+  itens-data-dev:

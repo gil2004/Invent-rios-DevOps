@@ -1,9 +1,12 @@
 FROM python:3.12-slim
 
+# Por defeito instala só o necessário para PRD; em DEV usa-se requirements-dev.txt
+ARG REQUIREMENTS=requirements-prd.txt
+
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements-*.txt ./
+RUN pip install --no-cache-dir -r ${REQUIREMENTS}
 
 COPY itens-service/app.py .
 
