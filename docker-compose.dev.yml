@@ -1,4 +1,6 @@
-# DEV: imagens com requirements-dev.txt (OpenTelemetry) e Jaeger para os testes de desenvolvimento
+# DEV: imagens com requirements-dev.txt e Jaeger para os testes de desenvolvimento.
+# O tracing é ligado só aqui, de fora: cada serviço arranca com "opentelemetry-instrument",
+# que envia os traces para o Jaeger. O código da aplicação não tem nada de OpenTelemetry.
 name: inventario-dev
 
 services:
@@ -9,11 +11,15 @@ services:
       args:
         REQUIREMENTS: requirements-dev.txt
     image: inventario-auth:dev
+    command: opentelemetry-instrument gunicorn -b 0.0.0.0:5001 app:app
     ports:
       - "5001:5001"
     environment:
       OTEL_SERVICE_NAME: auth-service
       OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318
+      OTEL_TRACES_EXPORTER: otlp_proto_http
+      OTEL_METRICS_EXPORTER: none
+      OTEL_LOGS_EXPORTER: none
 
   itens-service:
     build:
@@ -22,6 +28,7 @@ services:
       args:
         REQUIREMENTS: requirements-dev.txt
     image: inventario-itens:dev
+    command: opentelemetry-instrument gunicorn -b 0.0.0.0:5002 app:app
     ports:
       - "5002:5002"
     environment:
@@ -29,10 +36,35 @@ services:
       DB_PATH: /data/itens.db
       OTEL_SERVICE_NAME: itens-service
       OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318
+      OTEL_TRACES_EXPORTER: otlp_proto_http
+      OTEL_METRICS_EXPORTER: none
+      OTEL_LOGS_EXPORTER: none
     volumes:
       - itens-data-dev:/data
     depends_on:
       - auth-service
+      - jaeger
+
+  web-service:
+    build:
+      context: .
+      dockerfile: web-service/Dockerfile
+      args:
+        REQUIREMENTS: requirements-dev.txt
+    image: inventario-web:dev
+    command: opentelemetry-instrument gunicorn -b 0.0.0.0:5003 app:app
+    ports:
+      - "5003:5003"
+    environment:
+      ITENS_URL: http://itens-service:5002
+      AUTH_URL: http://auth-service:5001
+      OTEL_SERVICE_NAME: web-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318
+      OTEL_TRACES_EXPORTER: otlp_proto_http
+      OTEL_METRICS_EXPORTER: none
+      OTEL_LOGS_EXPORTER: none
+    depends_on:
+      - itens-service
       - jaeger
 
   jaeger:

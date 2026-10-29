@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block conteudo %}
+  {% if msg %}<p class="msg">{{ msg }}</p>{% endif %}
+  <h2>Novo item</h2>
+  <form method="post" action="{{ url_for('criar') }}">
+    <input name="nome" placeholder="Nome" required>
+    <input name="quantidade" type="number" min="0" placeholder="Quantidade">
+    <input name="preco" type="number" min="0" step="0.01" placeholder="Preço">
+    <button>Criar</button>
+  </form>
+  <h2>Itens</h2>
+  <table>
+    <tr><th>Nome</th><th>Quantidade</th><th>Preço</th><th></th></tr>
+    {% for item in itens %}
+    <tr>
+      <td><input form="alterar-{{ item.id }}" name="nome" value="{{ item.nome }}"></td>
+      <td><input form="alterar-{{ item.id }}" name="quantidade" type="number" min="0" value="{{ item.quantidade }}"></td>
+      <td><input form="alterar-{{ item.id }}" name="preco" type="number" min="0" step="0.01" value="{{ item.preco }}"></td>
+      <td>
+        <form id="alterar-{{ item.id }}" method="post" action="{{ url_for('alterar', item_id=item.id) }}" style="display:inline">
+          <button>Guardar</button>
+        </form>
+        <form method="post" action="{{ url_for('apagar', item_id=item.id) }}" style="display:inline">
+          <button class="apagar">Apagar</button>
+        </form>
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="4">Ainda não há itens.</td></tr>
+    {% endfor %}
+  </table>
+{% endblock %}

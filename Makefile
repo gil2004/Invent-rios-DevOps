@@ -1,8 +1,8 @@
 # Projeto Final DevOps — inventario-devops
 # Ciclo DevOps por ambiente: build_ / start_ / stop_ / clean_ para DEV, STG e PRD.
-#   DEV: desenvolver e testar o código (com OpenTelemetry + Jaeger)
-#   STG: build das imagens de PRD e testes de integração para as validar
-#   PRD: pull das imagens já validadas (sem build) e subir no Kubernetes
+#   DEV: desenvolver e testar o código (testes de código e segurança + tracing com Jaeger)
+#   STG: build das imagens de PRD, análise das imagens (Trivy) e testes de integração
+#   PRD: só sobe o ambiente — o Kubernetes faz o pull das imagens validadas em STG
 # A limpeza só toca no que é deste projeto (não mexe noutros containers do PC).
 
 SHELL       := /bin/bash
@@ -12,12 +12,15 @@ VENV       := venv
 PY         := "$(CURDIR)/$(VENV)/bin/python"
 DEV        := docker compose -f docker-compose.dev.yml
 K          := microk8s kubectl
+K8S_LIGADO := microk8s status 2>/dev/null | grep -q "microk8s is running"
+TRIVY      := docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v inventario-trivy-cache:/root/.cache aquasec/trivy:latest
 TAG        ?= latest
 export TAG
-IMAGENS    := ghcr.io/gil2004/inventario-auth ghcr.io/gil2004/inventario-itens
+IMAGENS    := ghcr.io/gil2004/inventario-auth ghcr.io/gil2004/inventario-itens ghcr.io/gil2004/inventario-web
 CERT       := nginx/certs/nginx.crt
 REPORTS    := reports
 DEV_URL    := http://localhost:5002
+WEB_DEV    := http://localhost:5003
 JAEGER_URL := http://localhost:16686
 STG_URL    := https://localhost
 PRD_URL    := https://localhost:30443
@@ -26,8 +29,10 @@ JSON       := -H "Content-Type: application/json"
 
 .PHONY: all build_dev test_dev start_dev dev_status stop_dev clean_dev jaeger_dashboard jaeger_erro \
         cert build_stg start_stg stg_status stop_stg clean_stg \
-        k8s_start k8s_stop build_prd start_prd prd_status stop_prd clean_prd prd_demo prd_ha prd_scale clean
+        k8s_start k8s_stop start_prd prd_status stop_prd clean_prd prd_demo prd_ha prd_scale clean
 
+# Ciclo completo: DEV -> STG -> PRD (cada ambiente é parado antes do seguinte para poupar recursos)
+all: build_dev test_dev start_dev stop_dev build_stg start_stg stop_stg start_prd prd_demo
 
 ## DEV ##
 
@@ -37,15 +42,16 @@ build_dev:
 	$(PY) -m pip install -r requirements-dev.txt
 	$(DEV) build
 
-# DEV testes de código e segurança (sem ambiente a correr): lint, unitários, bandit, pip-audit
+# DEV testes de código e segurança (sem ambiente a correr): lint, unitários, bandit e pip-audit dos 3 ambientes
 test_dev:
 	@mkdir -p $(REPORTS)
 	$(PY) -m ruff check . | tee $(REPORTS)/dev-lint.txt
 	cd auth-service && $(PY) -m pytest -v --cov=app tests | tee ../$(REPORTS)/dev-unitarios-auth.txt
 	cd itens-service && $(PY) -m pytest -v --cov=app tests | tee ../$(REPORTS)/dev-unitarios-itens.txt
-	$(VENV)/bin/bandit -r auth-service itens-service -x auth-service/tests,itens-service/tests | tee $(REPORTS)/seguranca-bandit.txt
-	$(VENV)/bin/pip-audit -r requirements-prd.txt 2>&1 | tee $(REPORTS)/seguranca-pip-audit.txt
-	
+	cd web-service && $(PY) -m pytest -v --cov=app tests | tee ../$(REPORTS)/dev-unitarios-web.txt
+	$(VENV)/bin/bandit -r auth-service itens-service web-service -x auth-service/tests,itens-service/tests,web-service/tests | tee $(REPORTS)/seguranca-bandit.txt
+	for amb in dev stg prd; do $(VENV)/bin/pip-audit -r requirements-$$amb.txt 2>&1 | tee $(REPORTS)/seguranca-pip-audit-$$amb.txt || exit 1; done
+
 # DEV start: serviços + Jaeger, e teste de que os traces chegam ao Jaeger
 start_dev:
 	$(DEV) up -d
@@ -54,7 +60,7 @@ start_dev:
 	$(PY) -m pytest -v tests/dev | tee $(REPORTS)/dev-tracing.txt
 	@echo ""
 	@$(DEV) ps
-	@echo abrir API: $(DEV_URL)/api/itens
+	@echo abrir página: $(WEB_DEV)
 	@echo abrir Jaeger: $(JAEGER_URL)
 
 # Estado do DEV
@@ -82,7 +88,7 @@ jaeger_dashboard:
 jaeger_erro:
 	$(DEV) stop auth-service
 	@echo "--- Criar item com o auth-service em baixo (esperado: 503)"
-	-@curl -s -w "\nHTTP %{http_code}\n" -u $(CRED) $(JSON) -d '{"nome":"Erro"}' $(DEV_URL)/api/itens
+	@curl -s -w "\nHTTP %{http_code}\n" -u $(CRED) $(JSON) -d '{"nome":"Erro"}' $(DEV_URL)/api/itens
 	$(DEV) start auth-service
 	@echo "--- Abrir $(JAEGER_URL), service itens-service: o trace com 503 mostra a causa raiz"
 
@@ -94,9 +100,14 @@ cert:
 		-keyout nginx/certs/nginx.key -out $(CERT) \
 		-subj "/CN=localhost" -addext "subjectAltName=DNS:localhost,IP:127.0.0.1" )
 
-# STG build: imagens de PRD (só requirements-prd) com a tag $(TAG)
-build_stg: cert
+# STG build: imagens de PRD (só requirements-prd) com a tag $(TAG) e análise de vulnerabilidades com o Trivy
+# (o relatório mostra todas as vulnerabilidades; o build só falha se houver HIGH/CRITICAL com correção)
+build_stg:
 	docker compose build
+	@mkdir -p $(REPORTS)
+	for img in $(IMAGENS); do $(TRIVY) image --quiet --scanners vuln $$img:$(TAG) | tee $(REPORTS)/stg-trivy-$$(basename $$img).txt; done
+	for img in $(IMAGENS); do $(TRIVY) image --quiet --scanners vuln --ignore-unfixed --severity HIGH,CRITICAL --exit-code 1 $$img:$(TAG) > /dev/null || exit 1; done
+	@echo "--- Trivy: nenhuma vulnerabilidade HIGH/CRITICAL com correção por aplicar"
 
 # STG start: sobe o ambiente de PRD em Compose e valida com os testes de integração
 start_stg: cert
@@ -106,11 +117,12 @@ start_stg: cert
 	$(PY) -m pytest -v tests/integracao | tee $(REPORTS)/stg-integracao.txt
 	@echo ""
 	@docker compose ps
-	@echo abrir API: $(STG_URL)/api/itens
+	@echo abrir página: $(STG_URL)/
 
 # Estado do STG: containers e health dos serviços
 stg_status:
 	docker compose ps
+	@curl -s --cacert $(CERT) $(STG_URL)/health/web; echo
 	@curl -s --cacert $(CERT) $(STG_URL)/health/itens; echo
 	@curl -s --cacert $(CERT) $(STG_URL)/health/auth; echo
 
@@ -118,9 +130,11 @@ stg_status:
 stop_stg:
 	docker compose down
 
-# STG clean: containers, imagens, volume e rede de STG
+# STG clean: containers, imagens, volume e rede de STG, e a imagem e a cache do Trivy
 clean_stg:
 	docker compose down --rmi all --volumes --remove-orphans
+	docker image ls -q aquasec/trivy | xargs -r docker rmi -f
+	docker volume ls -q -f name=inventario-trivy-cache | xargs -r docker volume rm
 
 ## PRD (Kubernetes / MicroK8s) ##
 
@@ -134,43 +148,42 @@ k8s_start:
 
 # Desligar o Kubernetes (liberta memória)
 k8s_stop:
-	microk8s stop || (sleep 15 && microk8s stop)
+	@if $(K8S_LIGADO); then microk8s stop; else echo "--- Kubernetes já está desligado"; fi
 
-# PRD build: não há build da app; prepara o cluster e faz pull das imagens validadas em STG
-build_prd: cert k8s_start
-	for img in $(IMAGENS); do microk8s ctr image pull $$img:$(TAG) > /dev/null || exit 1; echo "pull OK: $$img:$(TAG)"; done
-
-# PRD start: configuração + certificado no cluster, deploy da tag $(TAG) e smoke tests
+# PRD start: só sobe o ambiente — o Kubernetes faz o pull das imagens $(TAG) validadas em STG e arranca os pods
 start_prd: cert k8s_start
 	$(K) create configmap nginx-conf --from-file=default.conf=nginx/nginx.conf --dry-run=client -o yaml | $(K) apply -f -
 	$(K) create secret tls nginx-tls --cert=$(CERT) --key=nginx/certs/nginx.key --dry-run=client -o yaml | $(K) apply -f -
 	sed "s/:latest/:$(TAG)/" k8s/prd.yml | $(K) apply -f -
 	$(K) rollout restart deployment nginx
 	$(K) wait --for=condition=available deployment --all --timeout=300s || ($(K) get pods; $(K) describe pods | grep -A5 "Events:"; exit 1)
-	@mkdir -p $(REPORTS)
-	BASE_URL=$(PRD_URL) $(PY) -m pytest -v tests/smoke | tee $(REPORTS)/prd-smoke.txt
 	@echo ""
 	@$(K) get pods
-	@echo abrir API: $(PRD_URL)/api/itens
+	@echo abrir página: $(PRD_URL)/
 
 # Estado do PRD: pods, services e deployments
 prd_status:
 	$(K) get all
 
-# PRD stop: apagar o que o prd.yml criou, o ConfigMap e o Secret
+# PRD stop: apagar o que o prd.yml criou, o ConfigMap e o Secret (se o Kubernetes estiver ligado)
 stop_prd:
-	-$(K) delete -f k8s/prd.yml --ignore-not-found
-	-$(K) delete configmap nginx-conf --ignore-not-found
-	-$(K) delete secret nginx-tls --ignore-not-found
+	@if $(K8S_LIGADO); then \
+		microk8s status --wait-ready > /dev/null; \
+		$(K) delete -f k8s/prd.yml --ignore-not-found; \
+		$(K) delete configmap nginx-conf --ignore-not-found; \
+		$(K) delete secret nginx-tls --ignore-not-found; \
+	else echo "--- Kubernetes desligado: o PRD já está parado"; fi
 
-# PRD clean: stop, apagar as imagens puxadas, confirmar e desligar o Kubernetes
+# PRD clean: stop, apagar as imagens do projeto no Kubernetes, confirmar e desligar o Kubernetes
 clean_prd: stop_prd
-	-for img in $(IMAGENS); do microk8s ctr image rm $$img:$(TAG); done
-	@echo "--- Só deve aparecer o service/kubernetes"
-	-$(K) get all
-	-$(MAKE) k8s_stop
+	@if $(K8S_LIGADO); then \
+		for img in $(IMAGENS); do microk8s ctr image rm $$img:$(TAG) > /dev/null 2>&1; done; \
+		echo "--- PRD: só deve aparecer o service/kubernetes"; \
+		$(K) get all; \
+	fi
+	@$(MAKE) --no-print-directory k8s_stop
 
-# Uso da aplicação em PRD: CRUD com login
+# Uso da aplicação em PRD pela API: CRUD com login (a página está em $(PRD_URL)/)
 prd_demo:
 	@echo "--- Criar item (com login)"
 	@ID=$$(curl -s --cacert $(CERT) -u $(CRED) $(JSON) -d '{"nome":"Portatil","quantidade":3,"preco":899.9}' $(PRD_URL)/api/itens \
@@ -212,11 +225,11 @@ clean: clean_dev clean_stg clean_prd
 	rm -rf nginx/certs
 	@echo "--- Verificacao: nada do projeto deve aparecer"
 	@docker ps -a --filter "name=inventario" --format "{{.Names}}" | grep . || echo "sem containers do projeto"
-	@docker images | grep -E "inventario|jaeger|nginx" || echo "sem imagens do projeto"
+	@docker images | grep -E "inventario|jaeger|nginx|trivy" || echo "sem imagens do projeto"
 	@docker volume ls | grep inventario || echo "sem volumes do projeto"
 	@docker network ls | grep inventario || echo "sem redes do projeto"
 	@echo "--- Os pedidos seguintes TEM de falhar"
-	@curl -s --max-time 3 $(DEV_URL)/health > /dev/null && echo "ERRO: DEV ainda responde" || echo "DEV parado: OK"
+	@curl -s --max-time 3 $(WEB_DEV)/health > /dev/null && echo "ERRO: DEV ainda responde" || echo "DEV parado: OK"
 	@curl -s --max-time 3 $(JAEGER_URL) > /dev/null && echo "ERRO: Jaeger ainda responde" || echo "Jaeger parado: OK"
-	@curl -sk --max-time 3 $(STG_URL)/health/itens > /dev/null && echo "ERRO: STG ainda responde" || echo "STG parado: OK"
-	@curl -sk --max-time 3 $(PRD_URL)/health/itens > /dev/null && echo "ERRO: PRD ainda responde" || echo "PRD parado: OK"
+	@curl -sk --max-time 3 $(STG_URL)/health/web > /dev/null && echo "ERRO: STG ainda responde" || echo "STG parado: OK"
+	@curl -sk --max-time 3 $(PRD_URL)/health/web > /dev/null && echo "ERRO: PRD ainda responde" || echo "PRD parado: OK"

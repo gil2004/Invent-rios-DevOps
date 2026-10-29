@@ -14,6 +14,17 @@ os.environ.setdefault("REQUESTS_CA_BUNDLE", str(CERT))
 def test_servicos_ativos():
     assert requests.get(f"{URL}/health/auth", timeout=5).status_code == 200
     assert requests.get(f"{URL}/health/itens", timeout=5).status_code == 200
+    assert requests.get(f"{URL}/health/web", timeout=5).status_code == 200
+
+
+def test_interface_web():
+    # O cliente abre a página no browser e vê o inventário
+    r = requests.get(f"{URL}/", timeout=5)
+    assert r.status_code == 200
+    assert "Inventário" in r.text
+    # A gestão pede login; com login a página abre
+    assert requests.get(f"{URL}/gerir", timeout=5).status_code == 401
+    assert requests.get(f"{URL}/gerir", auth=CRED, timeout=5).status_code == 200
 
 
 def test_crud_completo():

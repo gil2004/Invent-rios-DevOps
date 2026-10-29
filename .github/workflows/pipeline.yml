@@ -10,6 +10,7 @@ permissions:
 
 env:
   TAG: ${{ github.sha }}
+  IMAGENS: ghcr.io/gil2004/inventario-auth ghcr.io/gil2004/inventario-itens ghcr.io/gil2004/inventario-web
 
 jobs:
   dev:
@@ -31,10 +32,13 @@ jobs:
       - name: Testes unitários itens-service
         working-directory: itens-service
         run: python -m pytest -v --cov=app tests | tee ../reports/dev-unitarios-itens.txt
+      - name: Testes unitários web-service
+        working-directory: web-service
+        run: python -m pytest -v --cov=app tests | tee ../reports/dev-unitarios-web.txt
       - name: Segurança do código (bandit)
-        run: bandit -r auth-service itens-service -x auth-service/tests,itens-service/tests | tee reports/seguranca-bandit.txt
-      - name: Segurança das bibliotecas de PRD (pip-audit)
-        run: pip-audit -r requirements-prd.txt 2>&1 | tee reports/seguranca-pip-audit.txt
+        run: bandit -r auth-service itens-service web-service -x auth-service/tests,itens-service/tests,web-service/tests | tee reports/seguranca-bandit.txt
+      - name: Segurança das bibliotecas de DEV, STG e PRD (pip-audit)
+        run: for amb in dev stg prd; do pip-audit -r requirements-$amb.txt 2>&1 | tee reports/seguranca-pip-audit-$amb.txt; done
       - name: Subir o ambiente DEV com o Jaeger
         run: |
           docker compose -f docker-compose.dev.yml up -d --build
@@ -52,7 +56,7 @@ jobs:
           path: reports/
 
   stg:
-    name: STG - build das imagens de PRD e testes de integração
+    name: STG - build das imagens de PRD, Trivy e testes de integração
     needs: dev
     runs-on: ubuntu-latest
     environment: stg
@@ -62,10 +66,16 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements-stg.txt
+      - run: mkdir -p reports
       - name: Login no GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Build das imagens de PRD (só requirements-prd, tag = commit)
         run: docker compose build
+      - name: Vulnerabilidades das imagens (Trivy)
+        run: |
+          TRIVY="docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest"
+          for img in $IMAGENS; do $TRIVY image --quiet --scanners vuln $img:$TAG | tee reports/stg-trivy-$(basename $img).txt; done
+          for img in $IMAGENS; do $TRIVY image --quiet --scanners vuln --ignore-unfixed --severity HIGH,CRITICAL --exit-code 1 $img:$TAG > /dev/null; done
       - name: Certificado HTTPS (guardado nos Secrets do GitHub)
         env:
           TLS_CRT: ${{ secrets.TLS_CRT }}
@@ -79,15 +89,13 @@ jobs:
           docker compose up -d
           sleep 10
       - name: Testes de integração
-        run: |
-          mkdir -p reports
-          python -m pytest -v tests/integracao | tee reports/stg-integracao.txt
+        run: python -m pytest -v tests/integracao | tee reports/stg-integracao.txt
       - name: Publicar as imagens testadas (commit + latest)
         run: |
-          docker compose push auth-service itens-service
-          for s in auth itens; do
-            docker tag ghcr.io/gil2004/inventario-$s:$TAG ghcr.io/gil2004/inventario-$s:latest
-            docker push ghcr.io/gil2004/inventario-$s:latest
+          docker compose push auth-service itens-service web-service
+          for img in $IMAGENS; do
+            docker tag $img:$TAG $img:latest
+            docker push $img:latest
           done
       - name: Parar o ambiente
         if: always()
@@ -100,18 +108,13 @@ jobs:
           path: reports/
 
   prd:
-    name: PRD - pull da imagem testada em STG para Kubernetes (sem build) e smoke tests
+    name: PRD - subir o ambiente (pull da imagem testada em STG + up)
     needs: stg
     runs-on: ubuntu-latest
     environment: prd
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-python@v6
-        with:
-          python-version: "3.12"
-      - name: Ferramentas de teste no runner (não entram na app)
-        run: pip install -r requirements-stg.txt
-      - name: Preparar o servidor de PRD - instalar o MicroK8s (runner vazio; num servidor real já existe)
+      - name: Preparar o servidor - instalar o MicroK8s (runner vazio; num servidor real já existe)
         run: |
           sudo snap install microk8s --classic --channel=1.33/stable
           sudo microk8s status --wait-ready
@@ -119,8 +122,7 @@ jobs:
           mkdir -p ~/.kube
           sudo microk8s config > ~/.kube/config
           kubectl wait --for=condition=available deployment --all -n kube-system --timeout=180s
-          kubectl get nodes
-      - name: Certificado HTTPS (guardado nos Secrets do GitHub)
+      - name: Subir o PRD (pull da imagem testada em STG + up)
         env:
           TLS_CRT: ${{ secrets.TLS_CRT }}
           TLS_KEY: ${{ secrets.TLS_KEY }}
@@ -128,27 +130,13 @@ jobs:
           mkdir -p nginx/certs
           printf '%s\n' "$TLS_CRT" > nginx/certs/nginx.crt
           printf '%s\n' "$TLS_KEY" > nginx/certs/nginx.key
-      - name: Deploy da imagem testada em STG (tag = commit, sem build)
-        run: |
           kubectl create configmap nginx-conf --from-file=default.conf=nginx/nginx.conf
           kubectl create secret tls nginx-tls --cert=nginx/certs/nginx.crt --key=nginx/certs/nginx.key
           sed "s/:latest/:$TAG/" k8s/prd.yml | kubectl apply -f -
           kubectl wait --for=condition=available deployment --all --timeout=300s
           kubectl get pods -o wide
-      - name: Smoke tests
-        env:
-          BASE_URL: https://localhost:30443
-        run: |
-          mkdir -p reports
-          python -m pytest -v tests/smoke | tee reports/prd-smoke.txt
       - name: Diagnóstico (só se falhar)
         if: failure()
         run: |
           kubectl get pods -o wide
           kubectl describe pods | tail -60
-      - name: Guardar relatórios
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: reports-prd
-          path: reports/

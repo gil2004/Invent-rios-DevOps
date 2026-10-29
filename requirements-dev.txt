@@ -1,11 +1,11 @@
 -r requirements-prd.txt
-pytest==8.4.2
+pytest==9.2.0
 pytest-cov==7.0.0
 requests-mock==1.12.1
 ruff==0.13.2
 bandit==1.8.6
 pip-audit==2.9.0
-opentelemetry-sdk==1.45.0
-opentelemetry-exporter-otlp-proto-http==1.45.0
-opentelemetry-instrumentation-flask==0.66b0
-opentelemetry-instrumentation-requests==0.66b0
+opentelemetry-distro==0.66b1
+opentelemetry-exporter-otlp-proto-http==1.45.1
+opentelemetry-instrumentation-flask==0.66b1
+opentelemetry-instrumentation-requests==0.66b1

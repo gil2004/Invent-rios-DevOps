@@ -12,6 +12,7 @@ services:
     depends_on:
       - auth-service
       - itens-service
+      - web-service
     restart: unless-stopped
     networks:
       - inventario-net
@@ -42,6 +43,22 @@ services:
     restart: unless-stopped
     depends_on:
       - auth-service
+    networks:
+      - inventario-net
+
+  web-service:
+    build:
+      context: .
+      dockerfile: web-service/Dockerfile
+    image: ghcr.io/gil2004/inventario-web:${TAG:-latest}
+    environment:
+      ITENS_URL: http://itens-service:5002
+      AUTH_URL: http://auth-service:5001
+    deploy:
+      replicas: 2
+    restart: unless-stopped
+    depends_on:
+      - itens-service
     networks:
       - inventario-net
 

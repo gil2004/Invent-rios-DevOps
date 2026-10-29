@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inventário</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; color: #222; }
+    header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #326ce5; margin-bottom: 1.5rem; }
+    a { color: #326ce5; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+    th, td { text-align: left; padding: .5rem; border-bottom: 1px solid #ddd; }
+    th { background: #f4f8ff; }
+    input { padding: .3rem; width: 7rem; }
+    input[name=nome] { width: 12rem; }
+    button { padding: .35rem .8rem; cursor: pointer; }
+    .msg { background: #e8f5e9; padding: .6rem; border-radius: 4px; }
+    .erro { background: #fdecea; padding: .6rem; border-radius: 4px; }
+    .apagar { color: #b00020; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Inventário</h1>
+    <nav><a href="{{ url_for('inicio') }}">Lista</a> · <a href="{{ url_for('gerir') }}">Gerir (login)</a></nav>
+  </header>
+  {% block conteudo %}{% endblock %}
+</body>
+</html>

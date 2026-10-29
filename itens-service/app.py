@@ -7,23 +7,6 @@ from flask import Flask, jsonify, request
 
 AUTH_URL = os.getenv("AUTH_URL", "http://localhost:5001")
 
-def configurar_tracing(app):
-    if not os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT"):
-        return
-    from opentelemetry import trace
-    from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
-    from opentelemetry.instrumentation.flask import FlaskInstrumentor
-    from opentelemetry.instrumentation.requests import RequestsInstrumentor
-    from opentelemetry.sdk.trace import TracerProvider
-    from opentelemetry.sdk.trace.export import BatchSpanProcessor
-
-    provider = TracerProvider()
-    provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
-    trace.set_tracer_provider(provider)
-    FlaskInstrumentor().instrument_app(app)
-    RequestsInstrumentor().instrument()
-
-
 def validar_item(dados, parcial=False):
     if not parcial and not dados.get("nome"):
         return "O campo 'nome' é obrigatório"
@@ -39,7 +22,6 @@ def validar_item(dados, parcial=False):
 def create_app(db_path=None):
     app = Flask(__name__)
     app.json.ensure_ascii = False
-    configurar_tracing(app)
     db = db_path or os.getenv("DB_PATH", "itens.db")
 
     def ligar():

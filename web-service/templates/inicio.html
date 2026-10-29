@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block conteudo %}
+  {% if erro %}<p class="erro">{{ erro }}</p>{% endif %}
+  <table>
+    <tr><th>Nome</th><th>Quantidade</th><th>Preço</th></tr>
+    {% for item in itens %}
+    <tr><td>{{ item.nome }}</td><td>{{ item.quantidade }}</td><td>{{ "%.2f"|format(item.preco) }} €</td></tr>
+    {% else %}
+    <tr><td colspan="3">Ainda não há itens no inventário.</td></tr>
+    {% endfor %}
+  </table>
+{% endblock %}
