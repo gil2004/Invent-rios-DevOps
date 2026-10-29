@@ -2,7 +2,6 @@
 # Cada peça tem um Deployment (o que corre e quantas réplicas) e um Service (como se chega lá).
 
 # ---------- auth-service: verifica o login (2 réplicas, sem disco) ----------
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -36,7 +35,6 @@ spec:
       targetPort: 5001
 ---
 # ---------- itens-service: CRUD dos itens (2 réplicas, partilham o disco do SQLite) ----------
-
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -91,9 +89,8 @@ spec:
     - protocol: TCP
       port: 5002
       targetPort: 5002
-
+---
 # ---------- web-service: interface web para o cliente (2 réplicas, sem disco) ----------
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -131,9 +128,7 @@ spec:
       port: 5003
       targetPort: 5003
 ---
----
 # ---------- nginx: porta de entrada HTTPS (2 réplicas), aberta no PC na porta 30443 ----------
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -184,4 +179,3 @@ spec:
       targetPort: 443
       nodePort: 30443
   type: NodePort
----
