@@ -53,7 +53,7 @@ se não estiverem, a resposta é **401**.
 
 ## 3. Arquitetura (PRD)
 
-![HLD](docs/20261026-HLD-ProjetoFinal-DevOps.drawio.png)
+![HLD] (docs/20261026-HLD-ProjetoFinal-DevOps.drawio.png)
 
 | Componente | Réplicas | Função | Porta |
 |---|---|---|---|
