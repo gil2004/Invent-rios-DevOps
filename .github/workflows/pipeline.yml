@@ -56,7 +56,7 @@ jobs:
           path: reports/
 
   stg:
-    name: STG - build das imagens de PRD, Trivy e testes de integração
+    name: STG - build das imagens de PRD, Trivy, preparação do Kubernetes e testes de integração
     needs: dev
     runs-on: ubuntu-latest
     environment: stg
@@ -70,12 +70,20 @@ jobs:
       - name: Login no GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Build das imagens de PRD (só requirements-prd, tag = commit)
-        run: docker compose build
+        run: for s in auth itens web; do docker build -f $s-service/Dockerfile -t ghcr.io/gil2004/inventario-$s:$TAG .; done
       - name: Vulnerabilidades das imagens (Trivy)
         run: |
           TRIVY="docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest"
           for img in $IMAGENS; do $TRIVY image --quiet --scanners vuln $img:$TAG | tee reports/stg-trivy-$(basename $img).txt; done
           for img in $IMAGENS; do $TRIVY image --quiet --scanners vuln --ignore-unfixed --severity HIGH,CRITICAL --exit-code 1 $img:$TAG > /dev/null; done
+      - name: Preparar o servidor Kubernetes de STG (MicroK8s, portas, DNS e disco)
+        run: |
+          sudo snap install microk8s --classic --channel=1.33/stable
+          sudo bash k8s/preparar-servidor.sh
+          mkdir -p ~/.kube
+          sudo microk8s config > ~/.kube/config
+      - name: Passar as imagens construídas para o Kubernetes
+        run: for img in $IMAGENS; do docker save $img:$TAG | sudo microk8s ctr image import - > /dev/null; done
       - name: Certificado HTTPS (guardado nos Secrets do GitHub)
         env:
           TLS_CRT: ${{ secrets.TLS_CRT }}
@@ -84,22 +92,31 @@ jobs:
           mkdir -p nginx/certs
           printf '%s\n' "$TLS_CRT" > nginx/certs/nginx.crt
           printf '%s\n' "$TLS_KEY" > nginx/certs/nginx.key
-      - name: Arrancar o ambiente
+      - name: Subir a app no Kubernetes de STG (namespace inventario-stg, porta 9443)
         run: |
-          docker compose up -d
-          sleep 10
-      - name: Testes de integração
+          kubectl create namespace inventario-stg
+          kubectl -n inventario-stg create configmap nginx-conf --from-file=default.conf=nginx/nginx.conf
+          kubectl -n inventario-stg create secret tls nginx-tls --cert=nginx/certs/nginx.crt --key=nginx/certs/nginx.key
+          sed -e "s/:latest/:$TAG/" -e "s/imagePullPolicy: Always/imagePullPolicy: Never/" -e "s/nodePort: 8443/nodePort: 9443/" k8s/prd.yml | kubectl -n inventario-stg apply -f -
+          kubectl -n inventario-stg wait --for=condition=available deployment --all --timeout=300s
+          sleep 5
+          kubectl -n inventario-stg get pods,svc
+      - name: Testes de integração (na app a correr em Kubernetes)
+        env:
+          BASE_URL: https://localhost:9443
         run: python -m pytest -v tests/integracao | tee reports/stg-integracao.txt
-      - name: Publicar as imagens testadas (commit + latest)
+      - name: Publicar as imagens testadas no GHCR (commit + latest)
         run: |
-          docker compose push auth-service itens-service web-service
           for img in $IMAGENS; do
+            docker push $img:$TAG
             docker tag $img:$TAG $img:latest
             docker push $img:latest
           done
-      - name: Parar o ambiente
-        if: always()
-        run: docker compose down
+      - name: Diagnóstico (só se falhar)
+        if: failure()
+        run: |
+          kubectl -n inventario-stg get pods -o wide || true
+          kubectl -n inventario-stg describe pods | tail -60 || true
       - name: Guardar relatórios
         if: always()
         uses: actions/upload-artifact@v4
@@ -108,21 +125,19 @@ jobs:
           path: reports/
 
   prd:
-    name: PRD - subir o ambiente (pull da imagem testada em STG + up)
+    name: PRD - pull das imagens validadas em STG e up
     needs: stg
     runs-on: ubuntu-latest
     environment: prd
     steps:
       - uses: actions/checkout@v5
-      - name: Preparar o servidor - instalar o MicroK8s (runner vazio; num servidor real já existe)
+      - name: Preparar o servidor (runner vazio; num servidor real este passo já está feito)
         run: |
           sudo snap install microk8s --classic --channel=1.33/stable
-          sudo microk8s status --wait-ready
-          sudo microk8s enable dns hostpath-storage
+          sudo bash k8s/preparar-servidor.sh
           mkdir -p ~/.kube
           sudo microk8s config > ~/.kube/config
-          kubectl wait --for=condition=available deployment --all -n kube-system --timeout=180s
-      - name: Subir o PRD (pull da imagem testada em STG + up)
+      - name: Subir o PRD (pull das imagens validadas em STG + up)
         env:
           TLS_CRT: ${{ secrets.TLS_CRT }}
           TLS_KEY: ${{ secrets.TLS_KEY }}
@@ -130,13 +145,18 @@ jobs:
           mkdir -p nginx/certs
           printf '%s\n' "$TLS_CRT" > nginx/certs/nginx.crt
           printf '%s\n' "$TLS_KEY" > nginx/certs/nginx.key
-          kubectl create configmap nginx-conf --from-file=default.conf=nginx/nginx.conf
-          kubectl create secret tls nginx-tls --cert=nginx/certs/nginx.crt --key=nginx/certs/nginx.key
-          sed "s/:latest/:$TAG/" k8s/prd.yml | kubectl apply -f -
-          kubectl wait --for=condition=available deployment --all --timeout=300s
-          kubectl get pods -o wide
+          for img in $IMAGENS; do echo "pull $img:$TAG"; sudo microk8s ctr image pull $img:$TAG > /dev/null 2>&1; done
+          kubectl create namespace inventario-prd
+          kubectl -n inventario-prd create configmap nginx-conf --from-file=default.conf=nginx/nginx.conf
+          kubectl -n inventario-prd create secret tls nginx-tls --cert=nginx/certs/nginx.crt --key=nginx/certs/nginx.key
+          sed "s/:latest/:$TAG/" k8s/prd.yml | kubectl -n inventario-prd apply -f -
+          kubectl -n inventario-prd wait --for=condition=available deployment --all --timeout=300s
+          kubectl get pods -A
+          kubectl get svc -A
+          echo "K8s is Ready !"
+          echo " open https://localhost:8443/  and login with admin / admin123 "
       - name: Diagnóstico (só se falhar)
         if: failure()
         run: |
-          kubectl get pods -o wide
-          kubectl describe pods | tail -60
+          kubectl -n inventario-prd get pods -o wide || true
+          kubectl -n inventario-prd describe pods | tail -60 || true

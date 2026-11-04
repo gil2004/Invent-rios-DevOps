@@ -53,7 +53,7 @@ def test_auth_service_nao_exposto():
     assert r.status_code == 404
 
 
-def test_porta_80_fechada():
-    # Só existe HTTPS: um pedido em HTTP simples tem de falhar
-    with pytest.raises(requests.exceptions.ConnectionError):
-        requests.get(URL.replace("https://", "http://") + "/health/itens", timeout=5)
+def test_http_simples_recusado():
+    # Só existe HTTPS: um pedido em HTTP simples à porta da app é recusado pelo nginx (400)
+    r = requests.get(URL.replace("https://", "http://") + "/health/itens", timeout=5)
+    assert r.status_code == 400
