@@ -26,8 +26,8 @@ def ler_formulario(form):
 
 
 def create_app():
-    app = Flask(__name__)
-
+    app = Flask(__name__)  # NOSONAR - CSRF protegido pela verificação do Origin (mesma_origem)
+    
     def pedir_login():
         return ("Login necessário", 401, {"WWW-Authenticate": 'Basic realm="Inventario"'})
 

@@ -30,12 +30,14 @@ REPORTS    := reports
 DEV_URL    := http://localhost:5002
 WEB_DEV    := http://localhost:5003
 JAEGER_URL := http://localhost:16686
+SONAR_URL  := http://localhost:9000
+SONAR_STOP := docker ps -q -f name=^inventario-sonarqube$$ | xargs -r docker stop > /dev/null
 STG_URL    := https://localhost:9443
 PRD_URL    := https://localhost:8443
 CRED       := admin:admin123
 JSON       := -H "Content-Type: application/json"
 
-.PHONY: all build_dev test_dev start_dev dev_status stop_dev clean_dev jaeger_dashboard jaeger_erro \
+.PHONY: all build_dev test_dev sonar_dev start_dev dev_status stop_dev clean_dev jaeger_dashboard jaeger_erro \
         cert k8s_preparar build_stg start_stg stg_status stop_stg clean_stg \
         k8s_stop start_prd prd_status stop_prd clean_prd prd_demo prd_ha prd_scale clean
 
@@ -57,6 +59,10 @@ test_dev:
 	$(VENV)/bin/bandit -r auth-service itens-service web-service -x auth-service/tests,itens-service/tests,web-service/tests | tee $(REPORTS)/seguranca-bandit.txt
 	for amb in dev stg prd; do $(VENV)/bin/pip-audit -r requirements-$$amb.txt 2>&1 | tee $(REPORTS)/seguranca-pip-audit-$$amb.txt || exit 1; done
 
+# DEV SonarQube: análise de qualidade e segurança do código (painel em $(SONAR_URL) até ao stop_dev)
+sonar_dev:
+	bash sonarqube/analisar.sh $(REPORTS)/dev-sonarqube.txt
+
 # DEV start: serviços + Jaeger, e teste de que os traces chegam ao Jaeger
 start_dev:
 	$(DEV) up -d
@@ -72,13 +78,17 @@ start_dev:
 dev_status:
 	$(DEV) ps
 
-# DEV stop
+# DEV stop (também desliga o SonarQube, se estiver ligado)
 stop_dev:
 	$(DEV) down
+	@$(SONAR_STOP)
 
-# DEV clean: containers, imagens e volume de DEV, venv e caches
+# DEV clean: containers, imagens e volume de DEV, SonarQube, venv e caches
 clean_dev:
 	$(DEV) down --rmi all --volumes --remove-orphans
+	@$(SONAR_STOP)
+	docker image ls -q sonarqube | xargs -r docker rmi -f
+	docker image ls -q sonarsource/sonar-scanner-cli | xargs -r docker rmi -f
 	rm -rf $(VENV) .pytest_cache .ruff_cache .coverage
 	find . -name "__pycache__" -type d -prune -exec rm -rf {} +
 	find . -name ".pytest_cache" -type d -prune -exec rm -rf {} +
@@ -236,7 +246,7 @@ clean: clean_dev clean_stg clean_prd
 	rm -rf nginx/certs
 	@echo "--- Verificacao: nada do projeto deve aparecer"
 	@docker ps -a --filter "name=inventario" --format "{{.Names}}" | grep . || echo "sem containers do projeto"
-	@docker images | grep -E "inventario|jaeger|trivy" || echo "sem imagens do projeto"
+	@docker images | grep -E "inventario|jaeger|trivy|sonar" || echo "sem imagens do projeto"
 	@docker volume ls | grep inventario || echo "sem volumes do projeto"
 	@docker network ls | grep inventario || echo "sem redes do projeto"
 	@echo "--- Os pedidos seguintes TEM de falhar"

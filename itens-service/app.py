@@ -20,7 +20,7 @@ def validar_item(dados, parcial=False):
 
 
 def create_app(db_path=None):
-    app = Flask(__name__)
+    app = Flask(__name__)  # NOSONAR - API JSON com Basic Auth e sem cookies: não há risco de CSRF
     app.json.ensure_ascii = False
     db = db_path or os.getenv("DB_PATH", "itens.db")
 

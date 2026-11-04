@@ -7,7 +7,7 @@ PASSWORD = os.getenv("ADMIN_PASSWORD", "admin123")
 
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__)  # NOSONAR - API JSON com Basic Auth e sem cookies: não há risco de CSRF
     app.json.ensure_ascii = False
     
 

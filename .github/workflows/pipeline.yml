@@ -39,6 +39,8 @@ jobs:
         run: bandit -r auth-service itens-service web-service -x auth-service/tests,itens-service/tests,web-service/tests | tee reports/seguranca-bandit.txt
       - name: Segurança das bibliotecas de DEV, STG e PRD (pip-audit)
         run: for amb in dev stg prd; do pip-audit -r requirements-$amb.txt 2>&1 | tee reports/seguranca-pip-audit-$amb.txt; done
+      - name: Qualidade e segurança do código (SonarQube)
+        run: bash sonarqube/analisar.sh reports/dev-sonarqube.txt
       - name: Subir o ambiente DEV com o Jaeger
         run: |
           docker compose -f docker-compose.dev.yml up -d --build
