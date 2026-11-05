@@ -4,15 +4,24 @@
 set -euo pipefail
 ARGS=/var/snap/microk8s/current/args/kube-apiserver
 
+# Esperar que o Kubernetes fique pronto (logo a seguir a ligar, o "status" pode falhar umas vezes)
+esperar_k8s() {
+  for _ in $(seq 1 60); do
+    microk8s status --wait-ready --timeout 10 > /dev/null 2>&1 && return 0
+    sleep 5
+  done
+  echo "ERRO: o Kubernetes não arrancou"; exit 1
+}
+
 # Ligar o Kubernetes (se já estiver ligado não faz nada)
 snap start --enable microk8s
-microk8s status --wait-ready > /dev/null
+esperar_k8s
 
 # Portas 8443 (PRD) e 9443 (STG): por defeito o Kubernetes só aceita NodePorts entre 30000 e 32767
 if ! grep -q "service-node-port-range" "$ARGS"; then
   echo "--service-node-port-range=8000-32767" >> "$ARGS"
   snap restart microk8s
-  microk8s status --wait-ready > /dev/null
+  esperar_k8s
 fi
 
 # DNS (os serviços encontram-se pelo nome) e disco (para o SQLite do itens-service)

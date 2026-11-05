@@ -1,4 +1,4 @@
-# Projeto Final DevOps — inventario-devops
+# inventario-devops — gestor de inventário
 # Ciclo DevOps por ambiente: build_ / start_ / stop_ / clean_ para DEV, STG e PRD.
 #   DEV: desenvolver e testar o código (testes de código e segurança + tracing com Jaeger)
 #   STG: build das imagens de PRD, análise das imagens (Trivy), preparação do servidor Kubernetes
@@ -132,7 +132,8 @@ build_stg:
 start_stg: cert k8s_preparar
 	@echo "--- Passar as imagens construídas para o Kubernetes"
 	for img in $(IMAGENS); do docker save $$img:$(TAG) | microk8s ctr image import - > /dev/null || exit 1; done
-	$(K) create namespace $(STG_NS) --dry-run=client -o yaml | $(K) apply -f -
+	$(K) delete namespace $(STG_NS) --ignore-not-found
+	$(K) create namespace $(STG_NS)
 	$(KS) create configmap nginx-conf --from-file=default.conf=nginx/nginx.conf --dry-run=client -o yaml | $(KS) apply -f -
 	$(KS) create secret tls nginx-tls --cert=$(CERT) --key=nginx/certs/nginx.key --dry-run=client -o yaml | $(KS) apply -f -
 	sed -e "s/:latest/:$(TAG)/" -e "s/imagePullPolicy: Always/imagePullPolicy: Never/" -e "s/nodePort: 8443/nodePort: 9443/" k8s/prd.yml | $(KS) apply -f -
@@ -174,7 +175,8 @@ start_prd:
 	@test -f $(CERT) || (echo "--- Falta o certificado: é criado em STG (make start_stg)"; exit 1)
 	@echo "--- Pull das imagens validadas em STG ($(TAG))"
 	for img in $(IMAGENS); do echo "pull $$img:$(TAG)"; microk8s ctr image pull $$img:$(TAG) > /dev/null 2>&1 || { echo "ERRO: falhou o pull de $$img:$(TAG)"; exit 1; }; done
-	$(K) create namespace $(PRD_NS) --dry-run=client -o yaml | $(K) apply -f -
+	$(K) delete namespace $(PRD_NS) --ignore-not-found
+	$(K) create namespace $(PRD_NS)
 	$(KP) create configmap nginx-conf --from-file=default.conf=nginx/nginx.conf --dry-run=client -o yaml | $(KP) apply -f -
 	$(KP) create secret tls nginx-tls --cert=$(CERT) --key=nginx/certs/nginx.key --dry-run=client -o yaml | $(KP) apply -f -
 	sed "s/:latest/:$(TAG)/" k8s/prd.yml | $(KP) apply -f -
