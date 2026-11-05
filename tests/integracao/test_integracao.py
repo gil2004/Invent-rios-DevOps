@@ -1,7 +1,5 @@
 import os
 from pathlib import Path
-
-import pytest
 import requests
 
 URL = os.getenv("BASE_URL", "https://localhost")
